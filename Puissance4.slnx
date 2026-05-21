@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Puissance4.Interface/Puissance4.Interface.csproj" />
+  <Project Path="Puissance4.Systeme/Puissance4.Systeme.csproj" Id="2feed489-7e68-4d70-bd41-7a54a39138c1" />
+</Solution>

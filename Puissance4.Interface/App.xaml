@@ -1,0 +1,9 @@
+﻿<Application x:Class="Puissance4.Interface.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Puissance4.Interface"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <FontFamily x:Key="PlaypenSans">./Fonts/#Playpen Sans</FontFamily>
+    </Application.Resources>
+</Application>
