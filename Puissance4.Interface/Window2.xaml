@@ -1,0 +1,76 @@
+﻿<Window x:Class="Puissance4.Interface.Window2"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Puissance4.Interface"
+        mc:Ignorable="d"
+        Title="Window2" Height="450" Width="800">
+    <Grid Background="#FF0A111F">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="15*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Bienvenue au Puissance 4 !" FontFamily="{StaticResource PlaypenSans}" FontSize="24" 
+                   Foreground="White" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+        <Border Grid.Row="1" Grid.Column="0" Background="#FF1D1F23" Margin="10" CornerRadius="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Mode Challenge" Grid.Row="0" Grid.Column="0" Foreground="White" FontSize="20"
+                           FontFamily="{StaticResource PlaypenSans}" Margin="10"
+                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <TextBlock Text="Taille de la grille" Grid.Row="1" Grid.Column="0" Foreground="White" FontSize="20"
+                           FontFamily="{StaticResource PlaypenSans}" Margin="10"
+                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <TextBlock Text="Nombre de jetons à aligner" Grid.Row="2" Grid.Column="0" Foreground="White" FontSize="20"
+                           FontFamily="{StaticResource PlaypenSans}" Margin="10"
+                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <TextBlock Text="Temps de réflexion" Grid.Row="3" Grid.Column="0" Foreground="White" FontSize="20"
+                           FontFamily="{StaticResource PlaypenSans}" Margin="10"
+                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="1" Background="#FF1D1F23" Margin="10" CornerRadius="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Contraste marqué" Grid.Row="0" Grid.Column="0" Foreground="White" FontSize="20"
+                           FontFamily="{StaticResource PlaypenSans}" Margin="10"
+                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <TextBlock Text="Taille du texte" Grid.Row="1" Grid.Column="0" Foreground="White" FontSize="20"
+                           FontFamily="{StaticResource PlaypenSans}" Margin="10"
+                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <TextBlock Text="Couleurs et formes des jetons" Grid.Row="2" Grid.Column="0" Foreground="White" FontSize="20"
+                           FontFamily="{StaticResource PlaypenSans}" Margin="10"
+                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

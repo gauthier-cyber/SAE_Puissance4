@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Puissance4.Systeme\Puissance4.Systeme.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Fonts\PlaypenSans-Regular.ttf" />
   </ItemGroup>
 
