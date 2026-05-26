@@ -45,6 +45,43 @@
                 <TextBlock Text="Temps de réflexion" Grid.Row="3" Grid.Column="0" Foreground="White" FontSize="20"
                            FontFamily="{StaticResource PlaypenSans}" Margin="10"
                            VerticalAlignment="Center" TextWrapping="Wrap"/>
+
+                <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <RadioButton x:Name="RadioBtnChallengeOn" Content="On" Grid.Row="0" Foreground="White" FontSize="20"
+                                 FontFamily="{StaticResource PlaypenSans}" VerticalContentAlignment="Center"
+                                 VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                    <RadioButton x:Name="RadioBtnChallengeOff" Content="Off" Grid.Row="1" Foreground="White" FontSize="20"
+                                 FontFamily="{StaticResource PlaypenSans}" VerticalContentAlignment="Center"
+                                 VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,10,0"
+                                 IsChecked="True"/>
+                </Grid>
+                <ComboBox x:Name="ComboBoxTailleGrille" Grid.Row="1" Grid.Column="1" Width="150" Height="40"
+                          VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"
+                          VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Padding="10, 0, 0, 0"
+                          FontFamily="{StaticResource PlaypenSans}" FontSize="20">
+                    <ComboBoxItem x:Name="ComboBoxItemTailleGrille6_7" Content="6 x 7" IsSelected="True"/>
+                    <ComboBoxItem x:Name="ComboBoxItemTailleGrille8_9" Content="8 x 9"/>
+                    <ComboBoxItem x:Name="ComboBoxItemTailleGrille10_12" Content="10 x 12"/>
+                </ComboBox>
+                <TextBlock x:Name="TxtBlockNbJetonAAligner" Grid.Row="2" Grid.Column="1" Text="4"
+                           FontFamily="{StaticResource PlaypenSans}" FontSize="20" Foreground="White" 
+                           VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                <Slider x:Name="SliderNbJetonAAligner" Grid.Row="2" Grid.Column="1" 
+                        Minimum="3" Maximum="8" Value="4" TickFrequency="1" Width="140" Height="20" 
+                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="TxtBlockTempsReflexion" Grid.Row="3" Grid.Column="1" Text="10s"
+                           FontFamily="{StaticResource PlaypenSans}" FontSize="20" Foreground="White" 
+                           VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                <Slider x:Name="SliderTempsReflexion" Grid.Row="3" Grid.Column="1"
+                        Minimum="5" Maximum="60" Value="10" TickFrequency="5" Width="140" Height="20" 
+                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <CheckBox x:Name="CheckBoxTempsReflexion" Grid.Row="3" Grid.Column="0"
+                          VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
             </Grid>
         </Border>
 
@@ -70,6 +107,52 @@
                 <TextBlock Text="Couleurs et formes des jetons" Grid.Row="2" Grid.Column="0" Foreground="White" FontSize="20"
                            FontFamily="{StaticResource PlaypenSans}" Margin="10"
                            VerticalAlignment="Center" TextWrapping="Wrap"/>
+
+                <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <RadioButton x:Name="RadioBtnContrasteMarqueOn" Content="On" Grid.Row="0" Foreground="White" FontSize="20"
+                                 FontFamily="{StaticResource PlaypenSans}" VerticalContentAlignment="Center"
+                                 VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                    <RadioButton x:Name="RadioBtnContrasteMarqueOff" Content="Off" Grid.Row="1" Foreground="White" FontSize="20"
+                                 FontFamily="{StaticResource PlaypenSans}" VerticalContentAlignment="Center"
+                                 VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,10,0"
+                                 IsChecked="True"/>
+                </Grid>
+                <TextBlock x:Name="TxtBlockTailleTexte" Grid.Row="1" Grid.Column="1" Text="20" FontFamily="{StaticResource PlaypenSans}" FontSize="20" Foreground="White" 
+                           VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                <Slider x:Name="SliderTailleTexte" Grid.Row="1" Grid.Column="1" 
+                        Minimum="10" Maximum="30" Value="20" TickFrequency="2" Width="140" Height="20"
+                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Border Grid.Row="2" Grid.Column="1" Background="#cbc7b7" Margin="10,0" 
+                        BorderThickness="4,4,4,4" BorderBrush="Black" CornerRadius="20">
+                    <Grid>
+                        <Ellipse Fill="#bd0000" Margin="20,10,0,0" Width="40" Height="40"
+                                 VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                        <Ellipse Fill="#cafc00" Margin="0,10,20,0" Width="40" Height="40"
+                                 VerticalAlignment="Top" HorizontalAlignment="Right"/>
+                        <Button x:Name="BtnFormeJeton" Content="Parcourir" Foreground="#FF0A111F" Background="{x:Null}"
+                                FontFamily="{StaticResource PlaypenSans}" FontSize="20" Margin="10,0"
+                                VerticalAlignment="Bottom" HorizontalAlignment="Center" BorderBrush="{x:Null}">
+                        </Button>
+                    </Grid>
+                </Border>
+                <Button x:Name="BtnValider" Content="Valider" Grid.Row="3" Grid.Column="1" Height="40" Width="100"
+                        Background="#CBC7B7" Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20"
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" 
+                                    CornerRadius="15" 
+                                    BorderThickness="0">
+                                <ContentPresenter HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </Grid>
         </Border>
     </Grid>
