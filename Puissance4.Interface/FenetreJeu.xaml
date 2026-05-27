@@ -6,7 +6,201 @@
         xmlns:local="clr-namespace:Puissance4.Interface"
         mc:Ignorable="d"
         Title="FenetreJeu" Height="450" Width="800">
-    <Grid>
+    <Grid Background="#FF0A111F">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Margin="10,10,0,0" Height="200" VerticalAlignment="Top" 
+                BorderBrush="#cbc7b7" BorderThickness="4" CornerRadius="20">
+            <Grid x:Name="GridScore">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="TxtBlockJoueur1" Grid.Row="0" Grid.Column="1" Text="[Joueur 1]"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#cafc00"/>
+                <TextBlock x:Name="TxtBlockJoueur2" Grid.Row="0" Grid.Column="2" Text="[Joueur 2]"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#bd0000"/>
+
+                <TextBlock Text="Total" Grid.Row="7" Grid.Column="0"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockScoreJoueur1" Grid.Row="7" Grid.Column="1" Text="0"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockScoreJoueur2" Grid.Row="7" Grid.Column="2" Text="0"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                
+                <!-- Tableau de score à remplir -->
+                <TextBlock x:Name="TxtBlockPartie1" Grid.Row="1" Grid.Column="0" Tag="Partie 1"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP1Joueur1" Grid.Row="1" Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP1Joueur2" Grid.Row="1" Grid.Column="2"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                
+                <TextBlock x:Name="TxtBlockPartie2" Grid.Row="2" Grid.Column="0" Tag="Partie 2"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP2Joueur1" Grid.Row="2" Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP2Joueur2" Grid.Row="2" Grid.Column="2"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+
+                <TextBlock x:Name="TxtBlockPartie3" Grid.Row="3" Grid.Column="0" Tag="Partie 3"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP3Joueur1" Grid.Row="3" Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP3Joueur2" Grid.Row="3" Grid.Column="2"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                
+                <TextBlock x:Name="TxtBlockPartie4" Grid.Row="4" Grid.Column="0" Tag="Partie 4"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP4Joueur1" Grid.Row="4" Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP4Joueur2" Grid.Row="4" Grid.Column="2"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+
+                <TextBlock x:Name="TxtBlockPartie5" Grid.Row="5" Grid.Column="0" Tag="Partie 5"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP5Joueur1" Grid.Row="5" Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP5Joueur2" Grid.Row="5" Grid.Column="2"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                
+                <TextBlock x:Name="TxtBlockPartie6" Grid.Row="6" Grid.Column="0" Tag="Partie 6"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP6Joueur1" Grid.Row="6" Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                <TextBlock x:Name="TxtBlockP6Joueur2" Grid.Row="6" Grid.Column="2"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Column="1">
+            <TextBlock Text="Puissance 4 !" FontFamily="{StaticResource PlaypenSans}" Foreground="White"
+                       FontSize="24" HorizontalAlignment="Center" Margin="10"/>
+            <TextBlock FontFamily="{StaticResource PlaypenSans}" FontSize="24" HorizontalAlignment="Center" Margin="10">
+                <Run Text="C'est au tour de " Foreground="White"/>
+                <Run x:Name="RunTxtBlockAuTourDe" Text="[Joueur 1]" Foreground="#cafc00"/>
+            </TextBlock>
+
+            <Grid x:Name="GridTableJeu">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition x:Name="Column8" Width="0*"/>
+                    <ColumnDefinition x:Name="Column9" Width="0*"/>
+                    <ColumnDefinition x:Name="Column10" Width="0*"/>
+                    <ColumnDefinition x:Name="Column11" Width="0*"/>
+                    <ColumnDefinition x:Name="Column12" Width="0*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition x:Name="Row8" Height="0*"/>
+                    <RowDefinition x:Name="Row9" Height="0*"/>
+                    <RowDefinition x:Name="Row10" Height="0*"/>
+                    <RowDefinition x:Name="Row11" Height="0*"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="A" FontFamily="{StaticResource PlaypenSans}" FontSize="16" 
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Z" FontFamily="{StaticResource PlaypenSans}" FontSize="16" 
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="E" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="R" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="T" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="5" Text="Y" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="U" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="7" Text="I" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="8" Text="O" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="9" Text="P" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="10" Text="Q" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="11" Text="S" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
+                           Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                
+                <!-- Grille de jeu réalisée par le C# -->
+            </Grid>
+        </StackPanel>
         
+        <ListBox x:Name="ListBoxHistorique" Grid.Column="2" Margin="0,10,10,0" BorderBrush="#FFCBC7B7" 
+                 Background="{x:Null}" BorderThickness="4,4,4,4" Height="200" VerticalAlignment="Top">
+            <ListBox.Template>
+                <ControlTemplate TargetType="ListBox">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="20"/>
+                </ControlTemplate>
+            </ListBox.Template>
+        </ListBox>
+
+        <Button x:Name="BtnQuitter" Grid.Column="2" Content="Quitter" Height="40" Width="120" Background="#cbc7b7"
+                FontFamily="{StaticResource PlaypenSans}" FontSize="16" Foreground="#0a111f"
+                VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Click="BtnQuitter_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" 
+                            CornerRadius="10" 
+                            BorderThickness="0">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
     </Grid>
 </Window>
