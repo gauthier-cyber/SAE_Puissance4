@@ -1,12 +1,44 @@
-﻿<Window x:Class="Puissance4.Interface.FenetreVictoire"
+﻿<Window x:Class="Puissance4App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Puissance4.Interface"
-        mc:Ignorable="d"
-        Title="FenetreVictoire" Height="450" Width="800">
+        Title="Puissance 4" Height="450" Width="800"
+        Background="#FF0A111F"
+        FontFamily="{StaticResource PlaypenSans}">
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ========== ZONE CENTRALE ========== -->
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,40,0,0">
+
+            <!-- Titre -->
+            <TextBlock Text="Puissance 4 !" Foreground="White" FontSize="28"
+                       HorizontalAlignment="Center" Margin="0,0,0,30"/>
+
+            <!-- Message de victoire -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,50">
+                <TextBlock Text="Victoire du " Foreground="White" FontSize="22"/>
+                <TextBlock Text="[Joueur 1]" Foreground="YellowGreen" FontSize="22"/>
+                <TextBlock Text=" !" Foreground="White" FontSize="22"/>
+            </StackPanel>
+
+            <!-- Bouton -->
+            <Border Background="#D9C9A8" CornerRadius="10" Padding="20,12"
+                    HorizontalAlignment="Center">
+                <TextBlock Text="Voir la progression&#x0a;effectuée"
+                           Foreground="#1A1A1A" FontSize="16"
+                           TextAlignment="Center"/>
+            </Border>
+        </StackPanel>
+
+        <!-- ========== TEXTE DU BAS ========== -->
+        <TextBlock Grid.Row="1"
+                   Text="Partie enregistrée automatiquement"
+                   Foreground="White" FontSize="12"
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                   Margin="20,0,0,15"/>
     </Grid>
 </Window>
