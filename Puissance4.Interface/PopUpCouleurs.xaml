@@ -1,7 +1,11 @@
-﻿<Window x:Class="CouleursApp.MainWindow"
+﻿<Window x:Class="Puissance4.Interface.PopUpCouleurs"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Couleurs" Height="300" Width="650"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Puissance4.Interface"
+        mc:Ignorable="d"
+        Title="PopUpCouleurs" Height="300" Width="650"
         Background="#FF0A111F"
         FontFamily="{StaticResource PlaypenSans}">
 
@@ -12,12 +16,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ========== PANNEAU DE GAUCHE ========== -->
         <StackPanel Grid.Column="0" Margin="15">
             <TextBlock Text="Couleurs" Foreground="White" FontSize="18"
                        HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
-            <!-- Ligne 1 : rouge/jaune et blanc/noir -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3">
                 <Border Background="#D9C9A8" CornerRadius="20" Padding="8" Margin="4">
                     <StackPanel Orientation="Horizontal">
@@ -33,7 +35,6 @@
                 </Border>
             </StackPanel>
 
-            <!-- Ligne 2 : gris et bleu/violet -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3">
                 <Border Background="#D9C9A8" CornerRadius="20" Padding="8" Margin="4">
                     <StackPanel Orientation="Horizontal">
@@ -49,7 +50,6 @@
                 </Border>
             </StackPanel>
 
-            <!-- Ligne 3 : verts et orange/vert -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3">
                 <Border Background="#D9C9A8" CornerRadius="20" Padding="8" Margin="4">
                     <StackPanel Orientation="Horizontal">
@@ -66,15 +66,12 @@
             </StackPanel>
         </StackPanel>
 
-        <!-- ========== BARRE DE SÉPARATION ========== -->
         <Rectangle Grid.Column="1" Width="2" Fill="Black" VerticalAlignment="Stretch" Margin="0,10"/>
 
-        <!-- ========== PANNEAU DE DROITE ========== -->
         <StackPanel Grid.Column="2" Margin="15">
             <TextBlock Text="Couleurs" Foreground="White" FontSize="18"
                        HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
-            <!-- Ligne 1 : cercles et triangles -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3">
                 <Border Background="#D9C9A8" CornerRadius="20" Padding="8" Margin="4">
                     <StackPanel Orientation="Horizontal">
@@ -90,7 +87,6 @@
                 </Border>
             </StackPanel>
 
-            <!-- Ligne 2 : étoiles 4 branches et étoiles 5 branches -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3">
                 <Border Background="#D9C9A8" CornerRadius="20" Padding="8" Margin="4">
                     <StackPanel Orientation="Horizontal">
@@ -110,7 +106,6 @@
                 </Border>
             </StackPanel>
 
-            <!-- Ligne 3 : carrés arrondis et losanges -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3">
                 <Border Background="#D9C9A8" CornerRadius="20" Padding="8" Margin="4">
                     <StackPanel Orientation="Horizontal">
@@ -128,4 +123,3 @@
         </StackPanel>
     </Grid>
 </Window>
-<!-- Pour le back-end, choisir un duo de couleurs, pas une seule dans un encadré et une seule dans un autre -->
