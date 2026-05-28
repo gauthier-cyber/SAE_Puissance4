@@ -21,5 +21,10 @@ namespace Puissance4.Interface
         {
             InitializeComponent();
         }
+
+        private void BtnQuitter_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Implémenter la logique pour quitter le jeu
+        }
     }
 }

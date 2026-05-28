@@ -13,11 +13,11 @@ using System.Windows.Shapes;
 namespace Puissance4.Interface
 {
     /// <summary>
-    /// Logique d'interaction pour PopUpPerf.xaml
+    /// Logique d'interaction pour FenetreReglage.xaml
     /// </summary>
-    public partial class PopUpPerf : Window
+    public partial class FenetreReglage : Window
     {
-        public PopUpPerf()
+        public FenetreReglage()
         {
             InitializeComponent();
         }

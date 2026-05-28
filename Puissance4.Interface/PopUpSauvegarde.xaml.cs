@@ -13,13 +13,19 @@ using System.Windows.Shapes;
 namespace Puissance4.Interface
 {
     /// <summary>
-    /// Logique d'interaction pour Pop_up1.xaml
+    /// Logique d'interaction pour PopUpSauvegarde.xaml
     /// </summary>
-    public partial class Pop_up1 : Window
+    public partial class PopUpSauvegarde : Window
     {
-        public Pop_up1()
+        public PopUpSauvegarde()
         {
             InitializeComponent();
+        }
+
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        {
+            // Faire apparaître un message d'erreur "Il n'y a pas de sauvegarde disponible"
+            MessageBox.Show("Il n'y a pas de sauvegarde disponible");
         }
     }
 }
