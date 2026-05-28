@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Puissance4.Interface"
         mc:Ignorable="d"
-        Title="PopUpCouleurs" Height="300" Width="650"
+        Title="Puissance 4" Height="300" Width="650"
         Background="#FF0A111F"
         FontFamily="{StaticResource PlaypenSans}">
 
