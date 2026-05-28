@@ -13,11 +13,11 @@ using System.Windows.Shapes;
 namespace Puissance4.Interface
 {
     /// <summary>
-    /// Logique d'interaction pour Window2.xaml
+    /// Logique d'interaction pour FenetreReglage.xaml
     /// </summary>
-    public partial class Window2 : Window
+    public partial class FenetreReglage : Window
     {
-        public Window2()
+        public FenetreReglage()
         {
             InitializeComponent();
         }

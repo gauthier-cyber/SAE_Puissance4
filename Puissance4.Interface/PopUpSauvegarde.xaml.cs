@@ -13,11 +13,11 @@ using System.Windows.Shapes;
 namespace Puissance4.Interface
 {
     /// <summary>
-    /// Logique d'interaction pour Pop_up1.xaml
+    /// Logique d'interaction pour PopUpSauvegarde.xaml
     /// </summary>
-    public partial class Pop_up1 : Window
+    public partial class PopUpSauvegarde : Window
     {
-        public Pop_up1()
+        public PopUpSauvegarde()
         {
             InitializeComponent();
         }

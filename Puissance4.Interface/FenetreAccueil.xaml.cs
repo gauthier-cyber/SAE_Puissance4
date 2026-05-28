@@ -12,11 +12,11 @@ using System.Windows.Shapes;
 namespace Puissance4.Interface
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for FenetreAccueil.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class FenetreAccueil : Window
     {
-        public Window1()
+        public FenetreAccueil()
         {
             InitializeComponent();
         }
