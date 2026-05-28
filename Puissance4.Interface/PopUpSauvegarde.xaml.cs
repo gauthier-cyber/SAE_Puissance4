@@ -21,5 +21,11 @@ namespace Puissance4.Interface
         {
             InitializeComponent();
         }
+
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        {
+            // Faire apparaître un message d'erreur "Il n'y a pas de sauvegarde disponible"
+            MessageBox.Show("Il n'y a pas de sauvegarde disponible");
+        }
     }
 }
