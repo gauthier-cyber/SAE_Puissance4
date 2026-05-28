@@ -28,7 +28,21 @@ namespace Puissance4.Interface
 
         private void BtnContinueGame_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Implémenter la logique pour continuer une partie en cours
+            // Ouvrir la PopUpSauvegarde
+            PopUpSauvegarde popUp = new PopUpSauvegarde();
+            popUp.ShowDialog();
+        }
+
+        private void BtnContinueGame_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // Faire apparaître des bordures blanches au boutton cliqué
+            BtnContinueGame.BorderThickness = new Thickness(5);
+        }
+
+        private void BtnContinueGame_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // Faire disparaître les bordures blanches au boutton décliqué
+            BtnContinueGame.BorderThickness = new Thickness(0);
         }
     }
 }

@@ -17,27 +17,25 @@
                    Foreground="White" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
         <Button x:Name="BtnNewGame" Grid.Row="1" Content="Nouvelle Partie Classique" Height="60" Width="350" Background="#CBC7B7"
-                Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20" Click="BtnNewGame_Click">
+                Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20" BorderThickness="0" 
+                Click="BtnNewGame_Click">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border Background="{TemplateBinding Background}" 
-                            CornerRadius="15" 
-                            BorderThickness="0">
-                        <ContentPresenter HorizontalAlignment="Center" 
-                                          VerticalAlignment="Center"/>
+                            CornerRadius="15" BorderBrush="White" BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </ControlTemplate>
             </Button.Template>
         </Button>
         <Button x:Name="BtnContinueGame" Grid.Row="2" Content="Reprendre une partie" Height="60" Width="350" Background="#CBC7B7"
-                Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20" Click="BtnContinueGame_Click">
+                Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20" BorderThickness="0" 
+                Click="BtnContinueGame_Click" GotFocus="BtnContinueGame_GotFocus" LostFocus="BtnContinueGame_LostFocus">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border Background="{TemplateBinding Background}" 
-                            CornerRadius="15" 
-                            BorderThickness="0">
-                        <ContentPresenter HorizontalAlignment="Center" 
-                                          VerticalAlignment="Center"/>
+                            CornerRadius="15" BorderBrush="White" BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </ControlTemplate>
             </Button.Template>
