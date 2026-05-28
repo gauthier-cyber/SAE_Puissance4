@@ -5,8 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Puissance4.Interface"
         mc:Ignorable="d"
-        Title="FenetreVictoire" Height="450" Width="800">
+        Title="FenetreVictoire" Height="450" Width="800"
+        Background="#FF0A111F"
+        FontFamily="{StaticResource PlaypenSans}">
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,40,0,0">
+
+            <TextBlock Text="Puissance 4 !" Foreground="White" FontSize="28"
+                       HorizontalAlignment="Center" Margin="0,0,0,30"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,50">
+                <TextBlock Text="Victoire du " Foreground="White" FontSize="22"/>
+                <TextBlock Text="[Joueur 1]" Foreground="YellowGreen" FontSize="22"/>
+                <TextBlock Text=" !" Foreground="White" FontSize="22"/>
+            </StackPanel>
+
+            <Border Background="#D9C9A8" CornerRadius="10" Padding="20,12"
+                    HorizontalAlignment="Center">
+                <TextBlock Text="Voir la progression&#x0a;effectuée"
+                           Foreground="#1A1A1A" FontSize="16"
+                           TextAlignment="Center"/>
+            </Border>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1"
+                   Text="Partie enregistrée automatiquement"
+                   Foreground="White" FontSize="12"
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                   Margin="20,0,0,15"/>
     </Grid>
 </Window>
