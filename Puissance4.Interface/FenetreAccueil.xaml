@@ -8,9 +8,9 @@
         Title="Puissance 4" Height="450" Width="800">
     <Grid Background="#FF0A111F">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="4*"/>
         </Grid.RowDefinitions>
 
         <TextBlock Text="Bienvenue au Puissance 4 !" FontFamily="{StaticResource PlaypenSans}" FontSize="24" 
@@ -40,5 +40,72 @@
                 </ControlTemplate>
             </Button.Template>
         </Button>
+
+        <Border x:Name="BorderNewGame" Grid.Row="2" Height="140" Width="400" Background="#1d1f23" CornerRadius="20" Visibility="Hidden">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+
+                <Button x:Name="BtnJouerA2" Grid.Row="0" Grid.Column="0" Content="Jouer à 2" Height="40" Width="150" Background="#cbc7b7"
+                        Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20" BorderThickness="0" 
+                        Click="BtnJouerA2_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" 
+                                    CornerRadius="10" BorderBrush="White" BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="BtnJouerSeul" Grid.Row="0" Grid.Column="1" Content="Jouer seul" Height="40" Width="150" Background="#cbc7b7"
+                        Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20" BorderThickness="0" 
+                        Click="BtnJouerSeul_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" 
+                                    CornerRadius="10" BorderBrush="White" BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Quel est le niveau de l'IA ?" FontFamily="{StaticResource PlaypenSans}" FontSize="20" 
+                   Foreground="White" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                
+                <Button x:Name="BtnIAIdiot" Grid.Row="2" Grid.Column="0" Content="Idiot" Height="40" Width="150" Background="#cbc7b7"
+                        Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20" BorderThickness="0"
+                        Click="BtnIA_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" 
+                                    CornerRadius="10" BorderBrush="White" BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="BtnIAIntelligent" Grid.Row="2" Grid.Column="1" Content="Intelligent" Height="40" Width="150" Background="#cbc7b7"
+                        Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20" BorderThickness="0"
+                        Click="BtnIA_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" 
+                                    CornerRadius="10" BorderBrush="White" BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
