@@ -73,15 +73,18 @@
                            VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                 <Slider x:Name="SliderNbJetonAAligner" Grid.Row="2" Grid.Column="1" 
                         Minimum="3" Maximum="8" Value="4" TickFrequency="1" Width="140" Height="20" 
-                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        VerticalAlignment="Center" HorizontalAlignment="Left" 
+                        ValueChanged="SliderNbJetonAAligner_ValueChanged"/>
                 <TextBlock x:Name="TxtBlockTempsReflexion" Grid.Row="3" Grid.Column="1" Text="10s"
                            FontFamily="{StaticResource PlaypenSans}" FontSize="20" Foreground="White" 
                            VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                 <Slider x:Name="SliderTempsReflexion" Grid.Row="3" Grid.Column="1"
                         Minimum="5" Maximum="60" Value="10" TickFrequency="5" Width="140" Height="20" 
-                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <CheckBox x:Name="CheckBoxTempsReflexion" Grid.Row="3" Grid.Column="0"
-                          VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                        VerticalAlignment="Center" HorizontalAlignment="Left" 
+                        ValueChanged="SliderTempsReflexion_ValueChanged"/>
+                <CheckBox x:Name="CheckBoxTempsReflexion" Grid.Row="3" Grid.Column="0" IsChecked="True"
+                          VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" 
+                          Unchecked="CheckBoxTempsReflexion_Unchecked" Checked="CheckBoxTempsReflexion_Checked"/>
             </Grid>
         </Border>
 
@@ -125,7 +128,8 @@
                            VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                 <Slider x:Name="SliderTailleTexte" Grid.Row="1" Grid.Column="1" 
                         Minimum="10" Maximum="30" Value="20" TickFrequency="2" Width="140" Height="20"
-                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        VerticalAlignment="Center" HorizontalAlignment="Left" 
+                        ValueChanged="SliderTailleTexte_ValueChanged"/>
                 <Border Grid.Row="2" Grid.Column="1" Background="#cbc7b7" Margin="10,0" 
                         BorderThickness="4,4,4,4" BorderBrush="Black" CornerRadius="20">
                     <Grid>
