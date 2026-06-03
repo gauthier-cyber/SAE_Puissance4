@@ -1,241 +1,199 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Puissance4.Systeme
 {
-    // Cette classe est le coeur du jeu.
-    // Elle gère la grille en tableau 2 dimensions, la gravité des jetons
-    // et la vérification des alignements pour trouver le gagnant.
-    // Elle ne contient AUCUN élément visuel.
+    // La classe Grille represente la grille de jeu du Puissance 4.
+    // C'est le coeur du moteur : elle gere le tableau, la gravite des jetons
+    // et la verification des alignements pour savoir s'il y a un gagnant.
+    // Attention : aucune partie graphique ici, on manipule juste des nombres.
     public class Grille
     {
-        // La grille de jeu. Chaque case contient :
-        //   0 = case vide
-        //   1 = jeton du joueur 1
-        //   2 = jeton du joueur 2
-        // Premier indice = ligne, deuxième indice = colonne.
-        private int[,] _grille;
+        // La grille est un tableau a 2 dimensions d'entiers.
+        // 0 = case vide, 1 = jeton du joueur 1, 2 = jeton du joueur 2.
+        public int[,] Grille { get; private set; }
 
-        private int _nombreLignes;
-        private int _nombreColonnes;
-        private int _jetonsAAligner;
+        // Nombre de lignes et de colonnes de la grille.
+        public int NbLignes { get; private set; }
+        public int NbColonnes { get; private set; }
 
-        // On garde en mémoire les cases de la dernière combinaison gagnante.
-        // Cela permet au front de mettre ces jetons en évidence (comme sur la maquette).
-        // _lignesGagnantes[i] et _colonnesGagnantes[i] = la case i de l'alignement.
-        private int[] _lignesGagnantes;
-        private int[] _colonnesGagnantes;
-        private int _nbCasesGagnantes;
+        // Nombre de jetons a aligner pour gagner (ex: 4).
+        public int NbJetonsAAligner { get; private set; }
 
-        // Constructeur : on crée une grille vide de la taille demandée.
-        public Grille(int nombreLignes, int nombreColonnes, int jetonsAAligner)
+
+        // Constructeur : on cree la grille a la bonne taille.
+        // Toutes les cases sont mises a 0 (vide) automatiquement par C#.
+        public Grille(int nbLignes, int nbColonnes, int nbJetonsAAligner)
         {
-            _nombreLignes = nombreLignes;
-            _nombreColonnes = nombreColonnes;
-            _jetonsAAligner = jetonsAAligner;
+            NbLignes = nbLignes;
+            NbColonnes = nbColonnes;
+            NbJetonsAAligner = nbJetonsAAligner;
 
-            _grille = new int[_nombreLignes, _nombreColonnes];
-
-            // On prépare le tableau qui stockera les cases gagnantes.
-            _lignesGagnantes = new int[_jetonsAAligner];
-            _colonnesGagnantes = new int[_jetonsAAligner];
-            _nbCasesGagnantes = 0;
-
-            ViderGrille();
+            Grille = new int[nbLignes, nbColonnes];
         }
 
-        // Propriétés en lecture seule pour que le front connaisse la taille.
-        public int NombreLignes
-        {
-            get { return _nombreLignes; }
-        }
 
-        public int NombreColonnes
+        // Vide completement la grille pour recommencer une partie.
+        public void Reinitialiser()
         {
-            get { return _nombreColonnes; }
-        }
-
-        public int JetonsAAligner
-        {
-            get { return _jetonsAAligner; }
-        }
-
-        // Remet toutes les cases à 0 (grille vide).
-        public void ViderGrille()
-        {
-            for (int ligne = 0; ligne < _nombreLignes; ligne++)
+            for (int ligne = 0; ligne < NbLignes; ligne++)
             {
-                for (int colonne = 0; colonne < _nombreColonnes; colonne++)
+                for (int colonne = 0; colonne < NbColonnes; colonne++)
                 {
-                    _grille[ligne, colonne] = 0;
+                    Grille[ligne, colonne] = 0;
                 }
             }
-            _nbCasesGagnantes = 0;
         }
 
-        // Renvoie le contenu d'une case (0, 1 ou 2).
-        // Le front l'utilise pour dessiner la grille.
-        public int LireCase(int ligne, int colonne)
-        {
-            return _grille[ligne, colonne];
-        }
 
-        // Vérifie si on peut encore jouer dans une colonne.
-        // C'est possible si la case du haut (ligne 0) est encore vide.
+        // Verifie si on peut encore jouer dans une colonne.
+        // On regarde simplement si la case tout en haut de la colonne est vide.
         public bool ColonneJouable(int colonne)
         {
-            // On vérifie d'abord que la colonne existe vraiment.
-            if (colonne < 0 || colonne >= _nombreColonnes)
-            {
+            // On verifie d'abord que la colonne existe vraiment.
+            if (colonne < 0 || colonne >= NbColonnes)
                 return false;
-            }
-            if (_grille[0, colonne] == 0)
-            {
+
+            // La case du haut est a la ligne 0. Si elle est vide, la colonne n'est pas pleine.
+            if (Grille[0, colonne] == 0)
                 return true;
-            }
-            return false;
+            else
+                return false;
         }
 
-        // Joue un jeton dans une colonne pour un joueur (numeroJoueur = 1 ou 2).
-        // Grâce à la gravité, le jeton tombe sur la ligne libre la plus basse.
-        // Renvoie le numéro de la ligne où le jeton s'est posé, ou -1 si la colonne est pleine.
-        public int JouerColonne(int colonne, int numeroJoueur)
-        {
-            // Si la colonne n'est pas jouable, on renvoie -1 (coup impossible).
-            if (ColonneJouable(colonne) == false)
-            {
-                return -1;
-            }
 
-            // On part du bas de la grille (dernière ligne) et on remonte
-            // jusqu'à trouver une case vide.
-            for (int ligne = _nombreLignes - 1; ligne >= 0; ligne--)
+        // Pose un jeton dans une colonne en respectant la gravite.
+        // Le jeton tombe sur la ligne disponible la plus basse.
+        // On renvoie le numero de la ligne ou le jeton s'est pose,
+        // ou -1 si la colonne est pleine ou n'existe pas.
+        public int PoserJeton(int colonne, int numeroJoueur)
+        {
+            // Si on ne peut pas jouer ici, on renvoie -1 pour signaler l'erreur.
+            if (ColonneJouable(colonne) == false)
+                return -1;
+
+            // On part du bas de la grille (derniere ligne) et on remonte
+            // jusqu'a trouver la premiere case vide.
+            for (int ligne = NbLignes - 1; ligne >= 0; ligne--)
             {
-                if (_grille[ligne, colonne] == 0)
+                if (Grille[ligne, colonne] == 0)
                 {
-                    _grille[ligne, colonne] = numeroJoueur;
-                    return ligne; // on a trouvé la place, on s'arrête
+                    // On pose le jeton ici et on renvoie la ligne trouvee.
+                    Grille[ligne, colonne] = numeroJoueur;
+                    return ligne;
                 }
             }
 
-            // Normalement on n'arrive jamais ici, mais on renvoie -1 par sécurité.
+            // Normalement on n'arrive jamais ici, mais par securite on renvoie -1.
             return -1;
         }
 
-        // Vérifie si la grille est complètement pleine (match nul possible).
-        public bool GrillePleine()
+
+        // Indique si la grille est entierement pleine.
+        // Sert a detecter un match nul.
+        public bool EstPleine()
         {
-            // Si au moins une colonne est jouable, la grille n'est pas pleine.
-            for (int colonne = 0; colonne < _nombreColonnes; colonne++)
+            // Il suffit de regarder la ligne du haut.
+            // Si toutes ses cases sont occupees, alors la grille est pleine.
+            for (int colonne = 0; colonne < NbColonnes; colonne++)
             {
-                if (ColonneJouable(colonne) == true)
-                {
+                if (Grille[0, colonne] == 0)
                     return false;
-                }
             }
             return true;
         }
 
-        // Vérifie si le joueur "numeroJoueur" vient de gagner.
-        // On regarde les 4 directions : horizontale, verticale et les 2 diagonales.
-        // Si on trouve un alignement, on renvoie vrai et on garde les cases gagnantes.
-        public bool VerifierVictoire(int numeroJoueur)
+
+        // Verifie si le joueur donne vient de gagner.
+        // On teste les 4 directions possibles a partir de chaque case.
+        // On renvoie vrai des qu'on trouve un alignement suffisant.
+        public bool ALigne(int numeroJoueur)
         {
-            // On teste chaque case de la grille comme point de départ possible.
-            for (int ligne = 0; ligne < _nombreLignes; ligne++)
+            // On parcourt toutes les cases de la grille.
+            for (int ligne = 0; ligne < NbLignes; ligne++)
             {
-                for (int colonne = 0; colonne < _nombreColonnes; colonne++)
+                for (int colonne = 0; colonne < NbColonnes; colonne++)
                 {
-                    // Direction horizontale (vers la droite) : ligne fixe, colonne +1
-                    if (VerifierDirection(ligne, colonne, 0, 1, numeroJoueur) == true)
+                    // On ne teste que les cases qui appartiennent au joueur.
+                    if (Grille[ligne, colonne] == numeroJoueur)
                     {
-                        return true;
-                    }
-                    // Direction verticale (vers le bas) : ligne +1, colonne fixe
-                    if (VerifierDirection(ligne, colonne, 1, 0, numeroJoueur) == true)
-                    {
-                        return true;
-                    }
-                    // Diagonale qui descend vers la droite : ligne +1, colonne +1
-                    if (VerifierDirection(ligne, colonne, 1, 1, numeroJoueur) == true)
-                    {
-                        return true;
-                    }
-                    // Diagonale qui monte vers la droite : ligne -1, colonne +1
-                    if (VerifierDirection(ligne, colonne, -1, 1, numeroJoueur) == true)
-                    {
-                        return true;
+                        // Direction horizontale (vers la droite) : ligne fixe, colonne +1.
+                        if (CompterDansDirection(ligne, colonne, 0, 1, numeroJoueur) >= NbJetonsAAligner)
+                            return true;
+
+                        // Direction verticale (vers le bas) : ligne +1, colonne fixe.
+                        if (CompterDansDirection(ligne, colonne, 1, 0, numeroJoueur) >= NbJetonsAAligner)
+                            return true;
+
+                        // Diagonale qui descend vers la droite : ligne +1, colonne +1.
+                        if (CompterDansDirection(ligne, colonne, 1, 1, numeroJoueur) >= NbJetonsAAligner)
+                            return true;
+
+                        // Diagonale qui descend vers la gauche : ligne +1, colonne -1.
+                        if (CompterDansDirection(ligne, colonne, 1, -1, numeroJoueur) >= NbJetonsAAligner)
+                            return true;
                     }
                 }
             }
-            // Aucun alignement trouvé.
+
+            // Aucun alignement trouve.
             return false;
         }
 
-        // Vérifie s'il y a "_jetonsAAligner" jetons identiques en partant d'une case
-        // et en avançant dans une direction donnée (pasLigne, pasColonne).
-        // Exemple : pasLigne=0 et pasColonne=1 veut dire "on avance vers la droite".
-        private bool VerifierDirection(int ligneDepart, int colonneDepart, int pasLigne, int pasColonne, int numeroJoueur)
-        {
-            int ligne = ligneDepart;
-            int colonne = colonneDepart;
 
-            // On va vérifier "_jetonsAAligner" cases d'affilée.
-            for (int compteur = 0; compteur < _jetonsAAligner; compteur++)
+        // Compte combien de jetons du meme joueur sont alignes a partir d'une case,
+        // dans une direction donnee.
+        // depLigne et depColonne indiquent le deplacement a chaque pas
+        // (par exemple 0 et 1 pour aller vers la droite).
+        // Cette methode est privee car elle sert juste a aider ALigne.
+        private int CompterDansDirection(int ligne, int colonne, int depLigne, int depColonne, int numeroJoueur)
+        {
+            int compte = 0;
+
+            // Position de depart.
+            int ligneCourante = ligne;
+            int colonneCourante = colonne;
+
+            // Tant qu'on reste dans la grille ET que la case appartient au joueur,
+            // on avance dans la direction choisie et on compte.
+            while (ligneCourante >= 0 && ligneCourante < NbLignes &&
+                   colonneCourante >= 0 && colonneCourante < NbColonnes &&
+                   Grille[ligneCourante, colonneCourante] == numeroJoueur)
             {
-                // Si on sort de la grille, l'alignement est impossible.
-                if (ligne < 0 || ligne >= _nombreLignes || colonne < 0 || colonne >= _nombreColonnes)
-                {
-                    return false;
-                }
-                // Si la case n'appartient pas au joueur, c'est raté.
-                if (_grille[ligne, colonne] != numeroJoueur)
-                {
-                    return false;
-                }
-                // On avance d'une case dans la direction choisie.
-                ligne = ligne + pasLigne;
-                colonne = colonne + pasColonne;
+                compte++;
+                ligneCourante = ligneCourante + depLigne;
+                colonneCourante = colonneCourante + depColonne;
             }
 
-            // Si on arrive ici, toutes les cases appartenaient au joueur : c'est gagné.
-            // On enregistre les cases gagnantes pour que le front puisse les surligner.
-            EnregistrerCasesGagnantes(ligneDepart, colonneDepart, pasLigne, pasColonne);
-            return true;
+            return compte;
         }
 
-        // Garde en mémoire les cases de l'alignement gagnant.
-        private void EnregistrerCasesGagnantes(int ligneDepart, int colonneDepart, int pasLigne, int pasColonne)
+
+        // Renvoie la liste des colonnes encore jouables.
+        // Pratique pour l'IA "Idiot" qui devra choisir au hasard parmi ces colonnes.
+        // On renvoie un tableau d'entiers contenant les numeros de colonnes valides.
+        public int[] ColonnesJouables()
         {
-            int ligne = ligneDepart;
-            int colonne = colonneDepart;
-            for (int i = 0; i < _jetonsAAligner; i++)
+            // On compte d'abord combien de colonnes sont jouables.
+            int nbJouables = 0;
+            for (int colonne = 0; colonne < NbColonnes; colonne++)
             {
-                _lignesGagnantes[i] = ligne;
-                _colonnesGagnantes[i] = colonne;
-                ligne = ligne + pasLigne;
-                colonne = colonne + pasColonne;
+                if (ColonneJouable(colonne))
+                    nbJouables++;
             }
-            _nbCasesGagnantes = _jetonsAAligner;
-        }
 
-        // Le front peut demander combien de cases gagnantes il y a.
-        public int NombreCasesGagnantes()
-        {
-            return _nbCasesGagnantes;
-        }
+            // On cree un tableau a la bonne taille et on le remplit.
+            int[] resultat = new int[nbJouables];
+            int index = 0;
+            for (int colonne = 0; colonne < NbColonnes; colonne++)
+            {
+                if (ColonneJouable(colonne))
+                {
+                    resultat[index] = colonne;
+                    index++;
+                }
+            }
 
-        // Le front demande la ligne de la i-ème case gagnante.
-        public int LireLigneGagnante(int i)
-        {
-            return _lignesGagnantes[i];
-        }
-
-        // Le front demande la colonne de la i-ème case gagnante.
-        public int LireColonneGagnante(int i)
-        {
-            return _colonnesGagnantes[i];
+            return resultat;
         }
     }
 }

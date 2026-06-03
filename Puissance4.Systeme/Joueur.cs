@@ -1,169 +1,100 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using System.ComponentModel;
 
 namespace Puissance4.Systeme
 {
-    // Cette classe représente un joueur (humain ou IA plus tard).
-    // Elle implémente INotifyPropertyChanged (vu en cours) pour que
-    // l'interface se mette à jour automatiquement quand une valeur change.
-    public class Joueur : INotifyPropertyChanged
+    // La classe Joueur représente un joueur du Puissance 4.
+    // Un joueur a un nom, une couleur (pour ses jetons) et peut être une IA ou non.
+    // On stocke aussi ses statistiques globales (victoires, défaites...) qui servent
+    // pour l'écran "Résumé des performances" de la maquette.
+    public class Joueur
     {
-        // Les attributs privés (commencent par _ comme dans le cours)
-        private string _nom;
-        private int _numero;       // 1 pour le joueur 1, 2 pour le joueur 2
-        private string _couleur;   // par exemple "Jaune" ou "Rouge"
-        private bool _estIA;       // vrai si ce joueur est géré par l'ordinateur
+        // --- Informations de base du joueur ---
 
-        // Les statistiques globales du joueur (utiles pour l'écran de performances)
-        private int _victoires;
-        private int _defaites;
-        private int _totalCoupsJoues;   // total de jetons posés sur toutes ses victoires
+        // Le nom affiché (ex: "Joueur 1").
+        public string Nom { get; set; }
 
-        // Constructeur : on crée un joueur en donnant son nom et son numéro.
-        public Joueur(string nom, int numero)
+        // La couleur du jeton (ex: "Jaune" ou "Rouge").
+        // On garde un simple texte car le back-end ne doit pas gérer le graphisme.
+        public string Couleur { get; set; }
+
+        // Le numéro du jeton de ce joueur dans la grille.
+        // On utilise 1 pour le joueur 1 et 2 pour le joueur 2.
+        // Le moteur (classe Plateau) range ce numéro dans les cases de la grille.
+        public int NumeroJeton { get; set; }
+
+        // Vrai si ce joueur est contrôlé par l'ordinateur.
+        public bool EstIA { get; set; }
+
+        // Le niveau de l'IA. Vaut Aucune si EstIA est faux.
+        public NiveauIA Niveau { get; set; }
+
+        // --- Statistiques globales (pour le résumé des performances) ---
+
+        // Nombre total de parties gagnées par ce joueur.
+        public int NbVictoires { get; set; }
+
+        // Nombre total de parties perdues par ce joueur.
+        public int NbDefaites { get; set; }
+
+        // Nombre total de coups joués sur toutes les parties.
+        // Sert à calculer la moyenne de coups par partie.
+        public int TotalCoupsJoues { get; set; }
+
+        // Nombre de parties terminées (sert aussi pour calculer la moyenne).
+        public int NbPartiesJouees { get; set; }
+
+
+        // Constructeur : on crée un joueur en donnant son nom et sa couleur.
+        // Par défaut ce n'est pas une IA.
+        public Joueur(string nom, string couleur)
         {
-            _nom = nom;
-            _numero = numero;
-            _couleur = "";
-            _estIA = false;
-            _victoires = 0;
-            _defaites = 0;
-            _totalCoupsJoues = 0;
+            Nom = nom;
+            Couleur = couleur;
+            NumeroJeton = 0; // sera mis à 1 ou 2 quand on crée la partie
+            EstIA = false;
+            Niveau = NiveauIA.Aucune;
+
+            // Au début, toutes les statistiques sont à zéro.
+            NbVictoires = 0;
+            NbDefaites = 0;
+            TotalCoupsJoues = 0;
+            NbPartiesJouees = 0;
         }
 
-        // Propriété Nom : si on change le nom, on prévient l'interface.
-        public string Nom
+
+        // Transforme ce joueur en IA avec un niveau donné.
+        public void DefinirCommeIA(NiveauIA niveau)
         {
-            get { return _nom; }
-            set
-            {
-                _nom = value;
-                OnPropertyChanged("Nom");
-            }
+            EstIA = true;
+            Niveau = niveau;
         }
 
-        // Propriété Numero (1 ou 2). En lecture seule car le numéro ne change pas.
-        public int Numero
+
+        // Calcule le ratio de victoires en pourcentage (ex: 72).
+        // On renvoie un entier pour rester simple.
+        public int CalculerRatioVictoires()
         {
-            get { return _numero; }
+            int total = NbVictoires + NbDefaites;
+
+            // On évite la division par zéro si le joueur n'a jamais joué.
+            if (total == 0)
+                return 0;
+
+            // On calcule le pourcentage. Le (double) sert à ne pas perdre les décimales
+            // pendant le calcul, puis on convertit en entier à la fin.
+            double ratio = (double)NbVictoires / total * 100;
+            return (int)ratio;
         }
 
-        // Propriété Couleur du jeton.
-        public string Couleur
-        {
-            get { return _couleur; }
-            set
-            {
-                _couleur = value;
-                OnPropertyChanged("Couleur");
-            }
-        }
 
-        // Propriété EstIA : indique si ce joueur est l'ordinateur.
-        public bool EstIA
+        // Calcule la moyenne de coups joués par partie (ex: 14).
+        public int CalculerMoyenneCoups()
         {
-            get { return _estIA; }
-            set
-            {
-                _estIA = value;
-                OnPropertyChanged("EstIA");
-            }
-        }
+            // On évite la division par zéro.
+            if (NbPartiesJouees == 0)
+                return 0;
 
-        // Nombre de victoires du joueur.
-        public int Victoires
-        {
-            get { return _victoires; }
-            set
-            {
-                _victoires = value;
-                OnPropertyChanged("Victoires");
-                // Le ratio dépend des victoires, donc on prévient aussi pour lui.
-                OnPropertyChanged("Ratio");
-            }
+            return TotalCoupsJoues / NbPartiesJouees;
         }
-
-        // Nombre de défaites du joueur.
-        public int Defaites
-        {
-            get { return _defaites; }
-            set
-            {
-                _defaites = value;
-                OnPropertyChanged("Defaites");
-                OnPropertyChanged("Ratio");
-            }
-        }
-
-        // Total des coups joués lors de ses victoires (pour la moyenne).
-        public int TotalCoupsJoues
-        {
-            get { return _totalCoupsJoues; }
-            set
-            {
-                _totalCoupsJoues = value;
-                OnPropertyChanged("TotalCoupsJoues");
-                OnPropertyChanged("MoyenneCoups");
-            }
-        }
-
-        // Le ratio de victoires en pourcentage (entre 0 et 100).
-        // C'est une propriété calculée, donc juste un get.
-        public int Ratio
-        {
-            get
-            {
-                int totalParties = _victoires + _defaites;
-                if (totalParties == 0)
-                {
-                    return 0; // on évite la division par zéro
-                }
-                // On calcule le pourcentage de victoires.
-                return (_victoires * 100) / totalParties;
-            }
-        }
-
-        // La moyenne du nombre de coups par victoire.
-        public int MoyenneCoups
-        {
-            get
-            {
-                if (_victoires == 0)
-                {
-                    return 0;
-                }
-                return _totalCoupsJoues / _victoires;
-            }
-        }
-
-        // Méthode appelée quand le joueur gagne une partie.
-        // nbCoups = le nombre de jetons qu'il a posés dans cette partie.
-        public void AjouterVictoire(int nbCoups)
-        {
-            Victoires = _victoires + 1;
-            TotalCoupsJoues = _totalCoupsJoues + nbCoups;
-        }
-
-        // Méthode appelée quand le joueur perd une partie.
-        public void AjouterDefaite()
-        {
-            Defaites = _defaites + 1;
-        }
-
-        // Partie technique de INotifyPropertyChanged (recopiée du cours).
-        // Elle prévient l'interface qu'une propriété a changé.
-        protected void OnPropertyChanged(string nomPropriete)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(nomPropriete));
-            }
-        }
-
-        // L'événement qui sera écouté par l'interface.
-        public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

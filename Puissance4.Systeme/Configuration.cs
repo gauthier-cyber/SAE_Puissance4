@@ -1,145 +1,91 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using System.ComponentModel;
 
 namespace Puissance4.Systeme
 {
-    // Cette classe contient tous les réglages choisis dans la fenêtre Réglage :
-    // mode challenge, taille de la grille, nombre de jetons à aligner,
-    // temps de réflexion et niveau de l'IA.
-    // Elle implémente aussi INotifyPropertyChanged pour la liaison de données.
-    public class Configuration : INotifyPropertyChanged
+    // La classe Parametres contient toute la configuration choisie par le joueur
+    // dans la fenêtre de réglages de la maquette (Mode Challenge, taille de la grille,
+    // nombre de jetons à aligner, temps de réflexion...).
+    // On range tout ça dans une seule classe pour la passer facilement à la partie.
+    public class Configuration
     {
-        // Attributs privés
-        private bool _modeChallenge;     // vrai = on enchaîne plusieurs parties
-        private bool _modeDeuxJoueurs;   // vrai = "Jouer à 2", faux = "Jouer seul" (contre IA)
-        private int _niveauIA;           // 0 = pas d'IA, 1 = Idiot, 2 = Intelligent
-        private int _nombreLignes;       // hauteur de la grille
-        private int _nombreColonnes;     // largeur de la grille
-        private int _jetonsAAligner;     // nombre de jetons à aligner pour gagner (4, 5...)
-        private bool _tempsLimite;       // vrai = un compte à rebours est actif
-        private int _tempsParCoup;       // temps en secondes pour jouer un coup (ex : 10)
+        // --- Mode de jeu ---
 
-        // Constructeur : on met les valeurs par défaut (grille 6x7, aligner 4).
-        public Configuration()
-        {
-            _modeChallenge = false;
-            _modeDeuxJoueurs = true;
-            _niveauIA = 0;
-            _nombreLignes = 6;
-            _nombreColonnes = 7;
-            _jetonsAAligner = 4;
-            _tempsLimite = false;
-            _tempsParCoup = 10;
-        }
+        // Le mode choisi : 2 joueurs ou joueur seul.
+        public ModeJeu Mode { get; set; }
 
-        // Mode challenge activé ou non.
-        public bool ModeChallenge
-        {
-            get { return _modeChallenge; }
-            set
-            {
-                _modeChallenge = value;
-                OnPropertyChanged("ModeChallenge");
-            }
-        }
+        // Le niveau de l'IA si on joue seul.
+        public NiveauIA NiveauIA { get; set; }
 
-        // Mode 2 joueurs (vrai) ou contre l'ordinateur (faux).
-        public bool ModeDeuxJoueurs
-        {
-            get { return _modeDeuxJoueurs; }
-            set
-            {
-                _modeDeuxJoueurs = value;
-                OnPropertyChanged("ModeDeuxJoueurs");
-            }
-        }
+        // --- Mode Challenge ---
 
-        // Niveau de l'IA : 0 = aucune, 1 = Idiot, 2 = Intelligent.
-        public int NiveauIA
-        {
-            get { return _niveauIA; }
-            set
-            {
-                _niveauIA = value;
-                OnPropertyChanged("NiveauIA");
-            }
-        }
+        // Vrai si le mode Challenge est activé (série de plusieurs parties).
+        public bool ModeChallenge { get; set; }
+
+        // --- Taille de la grille (ex: 6x7, 8x9, 10x12) ---
 
         // Nombre de lignes de la grille.
-        public int NombreLignes
-        {
-            get { return _nombreLignes; }
-            set
-            {
-                _nombreLignes = value;
-                OnPropertyChanged("NombreLignes");
-            }
-        }
+        public int NbLignes { get; set; }
 
         // Nombre de colonnes de la grille.
-        public int NombreColonnes
+        public int NbColonnes { get; set; }
+
+        // Nombre de jetons à aligner pour gagner (ex: 4 ou 5).
+        public int NbJetonsAAligner { get; set; }
+
+        // --- Temps de réflexion ---
+
+        // Vrai si on limite le temps par coup (case cochée dans la maquette).
+        public bool TempsLimite { get; set; }
+
+        // Le temps de réflexion par coup en secondes (ex: 10).
+        public int TempsReflexionSecondes { get; set; }
+
+
+        // Constructeur : on met des valeurs par défaut qui correspondent
+        // à un Puissance 4 classique (grille 6x7, aligner 4 jetons).
+        public Configuration()
         {
-            get { return _nombreColonnes; }
-            set
-            {
-                _nombreColonnes = value;
-                OnPropertyChanged("NombreColonnes");
-            }
+            Mode = ModeJeu.DeuxJoueurs;
+            NiveauIA = NiveauIA.Aucune;
+            ModeChallenge = false;
+
+            NbLignes = 6;
+            NbColonnes = 7;
+            NbJetonsAAligner = 4;
+
+            TempsLimite = false;
+            TempsReflexionSecondes = 10;
         }
 
-        // Nombre de jetons à aligner pour gagner.
-        public int JetonsAAligner
-        {
-            get { return _jetonsAAligner; }
-            set
-            {
-                _jetonsAAligner = value;
-                OnPropertyChanged("JetonsAAligner");
-            }
-        }
 
-        // Indique si le temps de réflexion est limité.
-        public bool TempsLimite
+        // Vérifie que les paramètres choisis sont cohérents.
+        // Par exemple, il ne faut pas demander d'aligner plus de jetons
+        // qu'il n'y a de cases. On renvoie vrai si tout est correct.
+        public bool SontValides()
         {
-            get { return _tempsLimite; }
-            set
-            {
-                _tempsLimite = value;
-                OnPropertyChanged("TempsLimite");
-            }
-        }
+            // La grille doit avoir une taille minimale.
+            if (NbLignes < 4 || NbColonnes < 4)
+                return false;
 
-        // Temps en secondes accordé pour jouer un coup.
-        public int TempsParCoup
-        {
-            get { return _tempsParCoup; }
-            set
-            {
-                _tempsParCoup = value;
-                OnPropertyChanged("TempsParCoup");
-            }
-        }
+            // On doit aligner au moins 3 jetons.
+            if (NbJetonsAAligner < 3)
+                return false;
 
-        // Petite méthode pratique pour régler la taille de la grille en une fois.
-        // Le front peut l'appeler quand on choisit "6 x 7", "8 x 9", etc.
-        public void DefinirTaille(int lignes, int colonnes)
-        {
-            NombreLignes = lignes;
-            NombreColonnes = colonnes;
-        }
+            // On ne peut pas aligner plus de jetons que la plus grande dimension.
+            // On cherche d'abord la plus grande des deux dimensions.
+            int plusGrandeDimension = NbLignes;
+            if (NbColonnes > plusGrandeDimension)
+                plusGrandeDimension = NbColonnes;
 
-        // Partie technique de INotifyPropertyChanged (recopiée du cours).
-        protected void OnPropertyChanged(string nomPropriete)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(nomPropriete));
-            }
-        }
+            if (NbJetonsAAligner > plusGrandeDimension)
+                return false;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+            // Si le temps est limité, il doit être positif.
+            if (TempsLimite && TempsReflexionSecondes <= 0)
+                return false;
+
+            // Tout est bon.
+            return true;
+        }
     }
 }

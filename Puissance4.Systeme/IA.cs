@@ -2,45 +2,54 @@
 
 namespace Puissance4.Systeme
 {
-    // ============================================================
-    //  CLASSE RESERVEE POUR L'INTELLIGENCE ARTIFICIELLE
-    // ============================================================
+    // ========================================================================
+    //  CLASSE IA  ->  A DEVELOPPER PLUS TARD (NE PAS CODER POUR L'INSTANT)
+    // ========================================================================
     //
-    //  ATTENTION : cette classe n'est PAS encore developpee.
-    //  On la fera plus tard, ensemble.
+    // C'est ici que toute la logique de l'ordinateur (l'IA) devra etre placee.
+    // Pour l'instant on laisse seulement le squelette et les explications.
+    // On developpera le contenu des methodes dans une prochaine seance.
     //
-    //  Voici ce qu'elle devra contenir quand on s'en occupera :
+    // Rappel des deux niveaux prevus dans la maquette :
     //
-    //  1) L'IA "Idiot" :
-    //     - Elle choisira simplement une colonne au hasard parmi les
-    //       colonnes encore jouables.
-    //     - On utilisera la classe Random (vue en cours) pour tirer un
-    //       numero de colonne, puis on verifiera avec plateau.ColonneJouable(...)
-    //       que la colonne n'est pas pleine.
+    //   - IA "Idiot"      : elle doit juste choisir une colonne AU HASARD
+    //                       parmi les colonnes encore jouables.
+    //                       Astuce : la classe Plateau a deja une methode
+    //                       ColonnesJouables() qui renvoie la liste des colonnes
+    //                       valides. Il suffira de tirer un index au hasard
+    //                       avec la classe Random et de renvoyer cette colonne.
     //
-    //  2) L'IA "Intelligent" :
-    //     - Elle regardera si elle peut gagner en un coup.
-    //     - Sinon, elle regardera si l'adversaire peut gagner au coup
-    //       suivant, pour bloquer.
-    //     - Sinon, elle jouera un coup correct (par exemple au centre).
+    //   - IA "Intelligent": elle devra reflechir (regarder si elle peut gagner,
+    //                       bloquer l'adversaire, etc.). A faire plus tard.
     //
-    //  La methode principale ressemblera a ceci (a coder plus tard) :
+    // Idee de structure pour quand on la codera :
     //
-    //     public int ChoisirColonne(Plateau plateau, int niveauIA, int numeroJoueurIA)
+    // public class IA
+    // {
+    //     private NiveauIA niveau;        // Idiot ou Intelligent
+    //     private Random generateur;      // pour tirer un coup au hasard
+    //
+    //     public IA(NiveauIA niveau)
     //     {
-    //         // TODO : ecrire ici le choix de la colonne selon le niveau.
-    //         // Doit renvoyer un numero de colonne jouable.
-    //         return 0;
+    //         this.niveau = niveau;
+    //         this.generateur = new Random();
     //     }
     //
-    //  Rappel important : cette classe doit rester dans le back-end,
-    //  donc PAS d'affichage ici (pas de MessageBox, pas de couleurs).
-    //  Elle renvoie juste un numero de colonne (int) au front.
+    //     // Renvoie le numero de colonne choisi par l'IA pour le plateau donne.
+    //     public int ChoisirColonne(Plateau plateau)
+    //     {
+    //         if (niveau == NiveauIA.Idiot)
+    //         {
+    //             // TODO : recuperer les colonnes jouables et en tirer une au hasard.
+    //         }
+    //         else
+    //         {
+    //             // TODO : logique de l'IA intelligente (plus tard).
+    //         }
     //
-    // ============================================================
-
-    public class Ia
-    {
-        // Pour l'instant la classe est vide, on la remplira plus tard.
-    }
+    //         return 0; // valeur provisoire
+    //     }
+    // }
+    //
+    // ========================================================================
 }
