@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Puissance4.Systeme
+﻿namespace Puissance4.Systeme
 {
     public class Configuration
     {
