@@ -130,22 +130,21 @@
                         Minimum="10" Maximum="30" Value="20" TickFrequency="2" Width="140" Height="20"
                         VerticalAlignment="Center" HorizontalAlignment="Left" 
                         ValueChanged="SliderTailleTexte_ValueChanged"/>
-                <Border Grid.Row="2" Grid.Column="1" Background="#cbc7b7" Margin="10,0" 
-                        BorderThickness="4,4,4,4" BorderBrush="Black" CornerRadius="20">
+                <Border x:Name="BorderCouleursFormesJetons" Grid.Row="2" Grid.Column="1" Background="#cbc7b7" Margin="10,0" 
+                        BorderThickness="4,4,4,4" BorderBrush="Black" CornerRadius="20" 
+                        MouseLeftButtonDown="BorderCouleursFormesJetons_MouseLeftButtonDown">
                     <Grid>
                         <Ellipse Fill="#bd0000" Margin="20,10,0,0" Width="40" Height="40"
                                  VerticalAlignment="Top" HorizontalAlignment="Left"/>
                         <Ellipse Fill="#cafc00" Margin="0,10,20,0" Width="40" Height="40"
                                  VerticalAlignment="Top" HorizontalAlignment="Right"/>
-                        <Button x:Name="BtnFormeJeton" Content="Parcourir" Foreground="#FF0A111F" Background="{x:Null}"
-                                FontFamily="{StaticResource PlaypenSans}" FontSize="20" Margin="10,0"
-                                VerticalAlignment="Bottom" HorizontalAlignment="Center" BorderBrush="{x:Null}">
-                        </Button>
+                        <TextBlock Text="Parcourir" Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" 
+                                   FontSize="20" Margin="10,0" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
                 <Button x:Name="BtnValider" Content="Valider" Grid.Row="3" Grid.Column="1" Height="40" Width="100"
                         Background="#CBC7B7" Foreground="#FF0A111F" FontFamily="{StaticResource PlaypenSans}" FontSize="20"
-                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
+                        VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Click="BtnValider_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}" 
