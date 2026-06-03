@@ -1,278 +1,226 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System;
 using System.Reflection.Metadata;
 
 namespace Puissance4.Systeme
 {
-    // Cette classe représente une partie de Puissance 4 en cours.
-    // Elle relie le plateau, les deux joueurs, le tour par tour,
-    // l'historique des actions et les statistiques.
-    // C'est surtout cette classe que le front-end va utiliser.
-    public class Partie : INotifyPropertyChanged
+    // La classe Partie pilote une partie complete de Puissance 4.
+    // Elle utilise un Plateau pour la grille, garde les deux joueurs et les parametres,
+    // gere le tour par tour et enregistre les infos pour le resume (premier coup,
+    // coup decisif, duree, nombre de coups...).
+    // Le front-end appelle surtout cette classe.
+    public class Partie
     {
-        private Plateau _plateau;
-        private Parametres _parametres;
-        private Joueur _joueur1;
-        private Joueur _joueur2;
+        // Le plateau de jeu (la grille).
+        public Plateau Plateau { get; private set; }
 
-        // Le joueur dont c'est le tour (1 ou 2).
-        private int _joueurCourant;
+        // Les deux joueurs de la partie.
+        public Joueur Joueur1 { get; private set; }
+        public Joueur Joueur2 { get; private set; }
 
-        // Indique si la partie est terminée.
-        private bool _partieTerminee;
+        // Les parametres choisis (taille, temps, mode...).
+        public Parametres Parametres { get; private set; }
 
-        // Le vainqueur : 1, 2 ou 0 (match nul ou partie pas finie).
-        private int _vainqueur;
+        // Le joueur a qui c'est le tour de jouer.
+        public Joueur JoueurCourant { get; private set; }
 
-        // L'historique des actions, par exemple "[Joueur 1] joue en E".
-        // On utilise une List<string> car c'est simple et vu en cours.
-        private List<string> _historique;
+        // L'etat actuel de la partie (en cours, victoire J1, etc.).
+        public EtatPartie Etat { get; private set; }
 
-        // Les statistiques de cette partie (pour l'écran de performances).
-        private StatistiquesPartie _statistiques;
+        // --- Donnees pour le resume des performances ---
 
-        // Les lettres du clavier utilisées pour nommer les colonnes (A Z E R T Y U ...),
-        // comme sur la maquette. On les utilise pour écrire l'historique.
-        private string[] _lettresColonnes = { "A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P", "Q", "S" };
+        // Nombre de coups joues depuis le debut de la partie.
+        public int NbCoupsJoues { get; private set; }
 
-        // Constructeur : on crée une partie à partir des paramètres et des deux joueurs.
-        public Partie(Parametres parametres, Joueur joueur1, Joueur joueur2)
+        // Indique quel joueur a joue le tout premier coup (utile pour "Premier coup : J2").
+        public Joueur PremierJoueur { get; private set; }
+
+        // Memorise le coup decisif (celui qui a fait gagner).
+        // On garde le numero du joueur et le numero du coup.
+        public int CoupDecisifNumeroJoueur { get; private set; }
+        public int CoupDecisifNumeroCoup { get; private set; }
+
+        // Pour mesurer la duree de la partie, on retient l'heure de debut.
+        private DateTime heureDebut;
+        // Et l'heure de fin une fois la partie terminee.
+        private DateTime heureFin;
+
+
+        // Constructeur : on prepare une nouvelle partie a partir des parametres.
+        public Partie(Joueur joueur1, Joueur joueur2, Parametres parametres)
         {
-            _parametres = parametres;
-            _joueur1 = joueur1;
-            _joueur2 = joueur2;
+            Joueur1 = joueur1;
+            Joueur2 = joueur2;
+            Parametres = parametres;
 
-            // On crée le plateau à la bonne taille.
-            _plateau = new Plateau(parametres.NombreLignes, parametres.NombreColonnes, parametres.JetonsAAligner);
+            // On cree le plateau a la taille demandee dans les parametres.
+            Plateau = new Plateau(parametres.NbLignes, parametres.NbColonnes, parametres.NbJetonsAAligner);
 
-            _joueurCourant = 1;     // par convention, le joueur 1 commence
-            _partieTerminee = false;
-            _vainqueur = 0;
-            _historique = new List<string>();
-            _statistiques = new StatistiquesPartie();
-
-            // On note dans l'historique que les joueurs ont rejoint la partie.
-            _historique.Add(_joueur1.Nom + " a rejoint");
-            _historique.Add(_joueur2.Nom + " a rejoint");
+            // On demarre la partie proprement dite.
+            Demarrer();
         }
 
-        // ---- Propriétés en lecture pour le front ----
 
-        public Plateau Plateau
+        // (Re)demarre une partie : grille vide, joueur 1 commence, compteurs a zero.
+        public void Demarrer()
         {
-            get { return _plateau; }
+            Plateau.Reinitialiser();
+
+            // On s'assure que chaque joueur a le bon numero de jeton pour la grille.
+            Joueur1.NumeroJeton = 1;
+            Joueur2.NumeroJeton = 2;
+
+            // Par convention le joueur 1 commence.
+            JoueurCourant = Joueur1;
+            PremierJoueur = Joueur1;
+
+            Etat = EtatPartie.EnCours;
+            NbCoupsJoues = 0;
+
+            CoupDecisifNumeroJoueur = 0;
+            CoupDecisifNumeroCoup = 0;
+
+            // On note l'heure de depart pour calculer la duree plus tard.
+            heureDebut = DateTime.Now;
         }
 
-        public Parametres Parametres
+
+        // Joue un coup dans la colonne demandee pour le joueur courant.
+        // Renvoie la ligne ou le jeton s'est pose, ou -1 si le coup est impossible.
+        // Apres un coup valide, la methode met a jour l'etat et change de joueur.
+        public int JouerCoup(int colonne)
         {
-            get { return _parametres; }
-        }
+            // On ne joue pas si la partie est deja finie.
+            if (Etat != EtatPartie.EnCours)
+                return -1;
 
-        public Joueur Joueur1
-        {
-            get { return _joueur1; }
-        }
+            // On essaie de poser le jeton du joueur courant.
+            int ligne = Plateau.PoserJeton(colonne, JoueurCourant.NumeroJeton);
 
-        public Joueur Joueur2
-        {
-            get { return _joueur2; }
-        }
-
-        public int JoueurCourant
-        {
-            get { return _joueurCourant; }
-        }
-
-        public bool PartieTerminee
-        {
-            get { return _partieTerminee; }
-        }
-
-        public int Vainqueur
-        {
-            get { return _vainqueur; }
-        }
-
-        public StatistiquesPartie Statistiques
-        {
-            get { return _statistiques; }
-        }
-
-        // Renvoie l'objet Joueur dont c'est le tour (pratique pour le front).
-        public Joueur JoueurCourantObjet()
-        {
-            if (_joueurCourant == 1)
-            {
-                return _joueur1;
-            }
-            return _joueur2;
-        }
-
-        // Renvoie un texte du genre "C'est au tour de [Joueur 1]" pour le titre.
-        public string TexteTourEnCours()
-        {
-            return "C'est au tour de " + JoueurCourantObjet().Nom;
-        }
-
-        // Le coeur de la partie : on essaie de jouer dans une colonne.
-        // Renvoie vrai si le coup a été joué, faux si le coup est impossible
-        // (colonne pleine ou partie déjà terminée).
-        public bool Jouer(int colonne)
-        {
-            // Si la partie est finie, on ne joue plus.
-            if (_partieTerminee == true)
-            {
-                return false;
-            }
-
-            // On demande au plateau de poser le jeton (avec la gravité).
-            int ligne = _plateau.JouerColonne(colonne, _joueurCourant);
-
-            // Si le plateau renvoie -1, le coup était impossible.
+            // Si le coup est impossible (colonne pleine), on s'arrete la.
             if (ligne == -1)
+                return -1;
+
+            // Le coup est valide, on incremente le compteur de coups.
+            NbCoupsJoues++;
+
+            // On regarde si le joueur courant vient de gagner.
+            if (Plateau.ALigne(JoueurCourant.NumeroJeton))
             {
-                return false;
-            }
+                // On enregistre le coup decisif.
+                CoupDecisifNumeroJoueur = JoueurCourant.NumeroJeton;
+                CoupDecisifNumeroCoup = NbCoupsJoues;
 
-            // On enregistre le coup dans les statistiques.
-            _statistiques.EnregistrerCoup(_joueurCourant, colonne);
-
-            // On ajoute une ligne dans l'historique : "[Joueur 1] joue en E".
-            string lettre = LettreDeColonne(colonne);
-            _historique.Add(JoueurCourantObjet().Nom + " joue en " + lettre);
-
-            // On vérifie si le joueur courant vient de gagner.
-            if (_plateau.VerifierVictoire(_joueurCourant) == true)
-            {
-                _partieTerminee = true;
-                _vainqueur = _joueurCourant;
-                _statistiques.EnregistrerVictoire(_joueurCourant, colonne);
-                _historique.Add(JoueurCourantObjet().Nom + " gagne la partie");
-
-                // On met à jour les statistiques globales des deux joueurs.
-                if (_vainqueur == 1)
-                {
-                    _joueur1.AjouterVictoire(_statistiques.CoupsJoueur1);
-                    _joueur2.AjouterDefaite();
-                }
+                // On met l'etat selon le gagnant.
+                if (JoueurCourant == Joueur1)
+                    Etat = EtatPartie.VictoireJ1;
                 else
-                {
-                    _joueur2.AjouterVictoire(_statistiques.CoupsJoueur2);
-                    _joueur1.AjouterDefaite();
-                }
+                    Etat = EtatPartie.VictoireJ2;
 
-                OnPropertyChanged("PartieTerminee");
-                OnPropertyChanged("Vainqueur");
-                return true;
+                // On note l'heure de fin et on met a jour les statistiques.
+                Terminer();
+                return ligne;
             }
 
-            // Sinon, on vérifie si la grille est pleine (match nul).
-            if (_plateau.GrillePleine() == true)
+            // Pas de victoire : on verifie si la grille est pleine (match nul).
+            if (Plateau.EstPleine())
             {
-                _partieTerminee = true;
-                _vainqueur = 0;
-                _statistiques.EnregistrerMatchNul();
-                _historique.Add("Match nul, la grille est pleine");
-                OnPropertyChanged("PartieTerminee");
-                return true;
+                Etat = EtatPartie.MatchNul;
+                Terminer();
+                return ligne;
             }
 
-            // La partie continue : on passe au joueur suivant.
+            // La partie continue : on passe la main a l'autre joueur.
             ChangerDeJoueur();
-            return true;
+            return ligne;
         }
 
-        // Passe la main à l'autre joueur et prévient l'interface.
-        public void ChangerDeJoueur()
+
+        // Change le joueur courant (passe de J1 a J2 ou inversement).
+        private void ChangerDeJoueur()
         {
-            if (_joueurCourant == 1)
-            {
-                _joueurCourant = 2;
-            }
+            if (JoueurCourant == Joueur1)
+                JoueurCourant = Joueur2;
             else
-            {
-                _joueurCourant = 1;
-            }
-            OnPropertyChanged("JoueurCourant");
+                JoueurCourant = Joueur1;
         }
 
-        // Cette méthode est appelée par le front quand le temps de réflexion est écoulé.
-        // Comme demandé dans la maquette, le tour passe simplement à l'autre joueur.
-        // (Le front affichera l'alerte visuelle de son côté.)
+
+        // A appeler quand le temps de reflexion est ecoule pour le coup courant.
+        // Comme demande dans la maquette, on passe simplement le tour a l'autre joueur.
+        // Le front-end gere le minuteur (Timer) et appelle cette methode a la fin du temps.
         public void TempsEcoule()
         {
-            if (_partieTerminee == false)
+            // On ne fait rien si la partie est finie.
+            if (Etat != EtatPartie.EnCours)
+                return;
+
+            // Le joueur a perdu son tour : on passe au joueur suivant.
+            ChangerDeJoueur();
+        }
+
+
+        // Termine la partie : on note l'heure de fin et on met a jour les stats des joueurs.
+        private void Terminer()
+        {
+            heureFin = DateTime.Now;
+
+            // On met a jour les compteurs de victoires/defaites selon l'etat.
+            if (Etat == EtatPartie.VictoireJ1)
             {
-                _historique.Add(JoueurCourantObjet().Nom + " a depasse le temps");
-                ChangerDeJoueur();
+                Joueur1.NbVictoires++;
+                Joueur2.NbDefaites++;
+
+                // Pour la moyenne de coups par victoire, on ajoute les coups de cette partie.
+                Joueur1.TotalCoupsJoues = Joueur1.TotalCoupsJoues + NbCoupsJoues;
             }
-        }
-
-        // ---- Gestion de l'historique pour le front ----
-
-        // Renvoie le nombre de lignes dans l'historique.
-        public int NombreLignesHistorique()
-        {
-            return _historique.Count;
-        }
-
-        // Renvoie une ligne précise de l'historique.
-        public string LireLigneHistorique(int i)
-        {
-            return _historique[i];
-        }
-
-        // Renvoie la dernière action jouée (utile pour l'afficher en grand).
-        public string DerniereAction()
-        {
-            if (_historique.Count == 0)
+            else if (Etat == EtatPartie.VictoireJ2)
             {
-                return "";
+                Joueur2.NbVictoires++;
+                Joueur1.NbDefaites++;
+
+                Joueur2.TotalCoupsJoues = Joueur2.TotalCoupsJoues + NbCoupsJoues;
             }
-            return _historique[_historique.Count - 1];
+            // En cas de match nul, on ne change pas victoires/defaites.
+
+            // Dans tous les cas, les deux joueurs ont joué une partie de plus.
+            Joueur1.NbPartiesJouees++;
+            Joueur2.NbPartiesJouees++;
         }
 
-        // Donne la lettre de clavier qui correspond à une colonne (0 -> A, 1 -> Z, ...).
-        public string LettreDeColonne(int colonne)
+
+        // Renvoie la duree de la partie en secondes.
+        // Si la partie est encore en cours, on calcule depuis le debut jusqu'a maintenant.
+        public int DureeEnSecondes()
         {
-            // On vérifie qu'on a bien une lettre prévue pour cette colonne.
-            if (colonne >= 0 && colonne < _lettresColonnes.Length)
-            {
-                return _lettresColonnes[colonne];
-            }
-            // Sinon on renvoie juste le numéro de colonne en texte.
-            return (colonne + 1).ToString();
+            DateTime fin;
+
+            if (Etat == EtatPartie.EnCours)
+                fin = DateTime.Now;
+            else
+                fin = heureFin;
+
+            // On calcule l'ecart entre les deux heures.
+            TimeSpan ecart = fin - heureDebut;
+            return (int)ecart.TotalSeconds;
         }
 
-        // Fait l'inverse : à partir d'une lettre tapée au clavier, retrouve la colonne.
-        // Renvoie -1 si la lettre n'est pas une colonne valide.
-        public int ColonneDeLettre(string lettre)
+
+        // Renvoie une phrase a afficher pour le tour courant.
+        // Exemple : "C'est au tour de Joueur 1".
+        // Le front-end peut afficher ce texte directement.
+        public string MessageTour()
         {
-            for (int i = 0; i < _lettresColonnes.Length; i++)
-            {
-                // On compare sans tenir compte des majuscules/minuscules.
-                if (_lettresColonnes[i].ToUpper() == lettre.ToUpper())
-                {
-                    // On vérifie aussi que cette colonne existe dans la grille actuelle.
-                    if (i < _plateau.NombreColonnes)
-                    {
-                        return i;
-                    }
-                }
-            }
-            return -1;
+            return "C'est au tour de " + JoueurCourant.Nom;
         }
 
-        // Partie technique de INotifyPropertyChanged (recopiée du cours).
-        protected void OnPropertyChanged(string nomPropriete)
+
+        // Indique si la partie est terminee (victoire ou match nul).
+        public bool EstTerminee()
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(nomPropriete));
-            }
+            if (Etat == EtatPartie.EnCours)
+                return false;
+            else
+                return true;
         }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
     }
 }
