@@ -48,5 +48,18 @@ namespace Puissance4.Interface
         {
             TxtBlockTailleTexte.Text = ((int)SliderTailleTexte.Value).ToString();
         }
+
+        private void BorderCouleursFormesJetons_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            PopUpCouleurs popUpCouleurs = new PopUpCouleurs();
+            popUpCouleurs.ShowDialog();
+        }
+
+        private void BtnValider_Click(object sender, RoutedEventArgs e)
+        {
+            FenetreJeu fenetreJeu = new FenetreJeu();
+            fenetreJeu.Show();
+            this.Close();
+        }
     }
 }
