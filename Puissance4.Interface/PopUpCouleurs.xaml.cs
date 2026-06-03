@@ -21,5 +21,72 @@ namespace Puissance4.Interface
         {
             InitializeComponent();
         }
+
+        private string selectionCouleurs = "";
+        private string selectionFormes = "";
+
+        private void BorderCouleurs_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Border borderClique = (Border)sender;
+
+            if (borderClique.BorderBrush == Brushes.Transparent)
+            {
+                DéselectionnerAutresCouleurs();
+                borderClique.BorderBrush = Brushes.White;
+                selectionCouleurs = (string)borderClique.Tag;
+            }
+            else
+            {
+                borderClique.BorderBrush = Brushes.Transparent;
+                selectionCouleurs = "";
+            }
+
+            if (selectionCouleurs != "" && selectionFormes != "")
+            {
+                MessageBox.Show(selectionCouleurs + " " + selectionFormes);
+                this.Close();
+            }
+        }
+
+        private void BorderFormes_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Border borderClique = (Border)sender;
+
+            if (borderClique.BorderBrush == Brushes.Transparent)
+            {
+                DéselectionnerAutresFormes();
+                borderClique.BorderBrush = Brushes.White;
+                selectionFormes = (string)borderClique.Tag;
+            }
+            else
+            {
+                borderClique.BorderBrush = Brushes.Transparent;
+                selectionFormes = "";
+            }
+
+            if (selectionCouleurs != "" && selectionFormes != "")
+            {
+                MessageBox.Show(selectionCouleurs + " " + selectionFormes);
+                this.Close();
+            }
+        }
+
+        private void DéselectionnerAutresCouleurs()
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                Border border = (Border)FindName("BorderCouleur" + i.ToString());
+                border.BorderBrush = Brushes.Transparent;
+            }
+        }
+
+        private void DéselectionnerAutresFormes()
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                Border border = (Border)FindName("BorderForme" + i.ToString());
+                border.BorderBrush = Brushes.Transparent;
+            }
+        }
     }
 }
