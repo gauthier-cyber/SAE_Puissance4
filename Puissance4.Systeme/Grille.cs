@@ -28,6 +28,22 @@
                 }
                 Tableau.Add(ligne);
             }
-        })
+        }
+
+        public Grille((int, int) Taille)
+        {
+            Lignes = Taille.Item1;
+            Colonnes = Taille.Item2;
+            Tableau = new List<List<EtatCase>>();
+            for (int i = 0; i < Lignes; i++)
+            {
+                var ligne = new List<EtatCase>();
+                for (int j = 0; j < Colonnes; j++)
+                {
+                    ligne.Add(EtatCase.Vide);
+                }
+                Tableau.Add(ligne);
+            }
+        }
     }
 }

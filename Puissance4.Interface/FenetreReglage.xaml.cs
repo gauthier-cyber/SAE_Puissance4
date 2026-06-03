@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Puissance4.Systeme;
 
 namespace Puissance4.Interface
 {
@@ -17,9 +18,19 @@ namespace Puissance4.Interface
     /// </summary>
     public partial class FenetreReglage : Window
     {
-        public FenetreReglage()
+        public Joueur Joueur1 { get; set; }
+        public Joueur Joueur2 { get; set; }
+        public Configuration ?Config { get; set; }
+
+        private static string ?CouleurJoueur1;
+        private static string ?CouleurJoueur2;
+        private static string ?FormeJoueur;
+
+        public FenetreReglage(Joueur J1, Joueur J2)
         {
             InitializeComponent();
+            Joueur1 = J1;
+            Joueur2 = J2;
         }
 
         private void SliderNbJetonAAligner_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -57,8 +68,12 @@ namespace Puissance4.Interface
             string couleurs = popUpCouleurs.SelectionCouleurs;
             string formes = popUpCouleurs.SelectionFormes;
 
-            SolidColorBrush couleurGauche = (SolidColorBrush)(new BrushConverter().ConvertFrom(couleurs.Split(',')[0]));
-            SolidColorBrush couleurDroite = (SolidColorBrush)(new BrushConverter().ConvertFrom(couleurs.Split(',')[1]));
+            SolidColorBrush couleurGauche = (SolidColorBrush)(new BrushConverter().ConvertFrom(couleurs.Split(',')[0]))!;
+            SolidColorBrush couleurDroite = (SolidColorBrush)(new BrushConverter().ConvertFrom(couleurs.Split(',')[1]))!;
+
+            CouleurJoueur1 = couleurs.Split(',')[0];
+            CouleurJoueur2 = couleurs.Split(',')[1];
+            FormeJoueur = formes;
 
             switch (formes)
             {
@@ -117,7 +132,32 @@ namespace Puissance4.Interface
 
         private void BtnValider_Click(object sender, RoutedEventArgs e)
         {
-            FenetreJeu fenetreJeu = new FenetreJeu();
+            (int, int) TailleGrille = (0, 0);
+            if (ComboBoxItemTailleGrille6_7.IsSelected)
+            {
+                TailleGrille = (6, 7);
+            }
+            else if (ComboBoxItemTailleGrille8_9.IsSelected)
+            {
+                TailleGrille = (8, 9);
+
+            }
+            else if (ComboBoxItemTailleGrille10_12.IsSelected)
+            {
+                TailleGrille = (10, 12);
+            }
+
+            int NbJetonAAligner = (int)SliderNbJetonAAligner.Value;
+
+            int TempsReflexion = 0;
+            if (CheckBoxTempsReflexion.IsChecked == false)
+            {
+                TempsReflexion = (int)SliderTempsReflexion.Value;
+            }
+
+            Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!, FormeJoueur!, TempsReflexion);
+
+            FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config);
             fenetreJeu.Show();
             this.Close();
         }
