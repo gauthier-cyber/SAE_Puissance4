@@ -22,8 +22,8 @@ namespace Puissance4.Interface
             InitializeComponent();
         }
 
-        private string selectionCouleurs = "";
-        private string selectionFormes = "";
+        public string SelectionCouleurs { get; private set; } = "";
+        public string SelectionFormes { get; private set; } = "";
 
         private void BorderCouleurs_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -33,17 +33,16 @@ namespace Puissance4.Interface
             {
                 DéselectionnerAutresCouleurs();
                 borderClique.BorderBrush = Brushes.White;
-                selectionCouleurs = (string)borderClique.Tag;
+                SelectionCouleurs = (string)borderClique.Tag;
             }
             else
             {
                 borderClique.BorderBrush = Brushes.Transparent;
-                selectionCouleurs = "";
+                SelectionCouleurs = "";
             }
 
-            if (selectionCouleurs != "" && selectionFormes != "")
+            if (SelectionCouleurs != "" && SelectionFormes != "")
             {
-                MessageBox.Show(selectionCouleurs + " " + selectionFormes);
                 this.Close();
             }
         }
@@ -56,17 +55,16 @@ namespace Puissance4.Interface
             {
                 DéselectionnerAutresFormes();
                 borderClique.BorderBrush = Brushes.White;
-                selectionFormes = (string)borderClique.Tag;
+                SelectionFormes = (string)borderClique.Tag;
             }
             else
             {
                 borderClique.BorderBrush = Brushes.Transparent;
-                selectionFormes = "";
+                SelectionFormes = "";
             }
 
-            if (selectionCouleurs != "" && selectionFormes != "")
+            if (SelectionCouleurs != "" && SelectionFormes != "")
             {
-                MessageBox.Show(selectionCouleurs + " " + selectionFormes);
                 this.Close();
             }
         }
