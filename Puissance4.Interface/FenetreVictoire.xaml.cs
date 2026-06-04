@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Puissance4.Systeme;
 
 namespace Puissance4.Interface
 {
@@ -17,9 +18,20 @@ namespace Puissance4.Interface
     /// </summary>
     public partial class FenetreVictoire : Window
     {
-        public FenetreVictoire()
+        public Partie Partie { get; set; }
+        public Challenge ?Challenge { get; set; }
+
+        public FenetreVictoire(Partie partie, Challenge challenge)
         {
             InitializeComponent();
+            Partie = partie;
+            Challenge = challenge;
+        }
+
+        public FenetreVictoire(Partie partie)
+        {
+            InitializeComponent();
+            Partie = partie;
         }
     }
 }

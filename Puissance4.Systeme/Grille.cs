@@ -45,5 +45,72 @@
                 Tableau.Add(ligne);
             }
         }
+
+        public void ChangerValeurCase(int ligne, int colonne, EtatCase etat)
+        {
+            Tableau[ligne][colonne] = etat;
+        }
+
+        public EtatCase VérifierAlignements(int nbJetons)
+        {
+            for (int i = 0; i < Lignes; i++)
+            {
+                for (int j = 0; j < Colonnes; j++)
+                {
+                    EtatCase joueurActuel = Tableau[i][j];
+
+                    // Si la case est vide, inutile de vérifier les alignements à partir d'ici
+                    if (joueurActuel == EtatCase.Vide)
+                        continue;
+
+                    // 1. Vérification Horizontale (vers la droite)
+                    if (j + nbJetons <= Colonnes)
+                    {
+                        bool aligne = true;
+                        for (int k = 1; k < nbJetons; k++)
+                        {
+                            if (Tableau[i][j + k] != joueurActuel) { aligne = false; break; }
+                        }
+                        if (aligne) return joueurActuel;
+                    }
+
+                    // 2. Vérification Verticale (vers le bas)
+                    if (i + nbJetons <= Lignes)
+                    {
+                        bool aligne = true;
+                        for (int k = 1; k < nbJetons; k++)
+                        {
+                            if (Tableau[i + k][j] != joueurActuel) { aligne = false; break; }
+                        }
+                        if (aligne) return joueurActuel;
+                    }
+
+                    // 3. Vérification Diagonale Descendante (vers le bas et la droite ➘)
+                    if (i + nbJetons <= Lignes && j + nbJetons <= Colonnes)
+                    {
+                        bool aligne = true;
+                        for (int k = 1; k < nbJetons; k++)
+                        {
+                            if (Tableau[i + k][j + k] != joueurActuel) { aligne = false; break; }
+                        }
+                        if (aligne) return joueurActuel;
+                    }
+
+                    // 4. Vérification Diagonale Ascendante (vers le haut et la droite ➚)
+                    if (i - nbJetons + 1 >= 0 && j + nbJetons <= Colonnes)
+                    {
+                        bool aligne = true;
+                        for (int k = 1; k < nbJetons; k++)
+                        {
+                            if (Tableau[i - k][j + k] != joueurActuel) { aligne = false; break; }
+                        }
+                        if (aligne) return joueurActuel;
+                    }
+                }
+            }
+
+            // Aucun alignement trouvé
+            return EtatCase.Vide;
+        }
     }
 }

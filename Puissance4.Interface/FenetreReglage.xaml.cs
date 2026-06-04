@@ -155,9 +155,25 @@ namespace Puissance4.Interface
                 TempsReflexion = (int)SliderTempsReflexion.Value;
             }
 
-            Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!, FormeJoueur!, TempsReflexion);
+            bool modeChallenge;
+            if (RadioBtnChallengeOn.IsChecked == true)
+            {
+                modeChallenge = true;
+            }
+            else
+            {
+                modeChallenge = false;
+            }
 
-            FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config);
+            if (CouleurJoueur1 == null && CouleurJoueur2 == null && FormeJoueur == null)
+            {
+                CouleurJoueur1 = "#bd0000";
+                CouleurJoueur2 = "#cafc00";
+                FormeJoueur = "Rond";
+            }
+
+            Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!, FormeJoueur!, TempsReflexion);
+            FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config, modeChallenge);
             fenetreJeu.Show();
             this.Close();
         }
