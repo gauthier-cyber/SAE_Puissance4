@@ -10,5 +10,17 @@
             ScoreJoueur1 = scoreJ1;
             ScoreJoueur2 = scoreJ2;
         }
+
+        void AjouterPointJoueur(int joueur)
+        {
+            if (joueur == 1)
+            {
+                ScoreJoueur1++;
+            }
+            else if (joueur == 2)
+            {
+                ScoreJoueur2++;
+            }
+        }
     }
 }

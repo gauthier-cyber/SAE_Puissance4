@@ -11,7 +11,6 @@
         public Configuration Configuration { get; set; }
         public Joueur ?Gagnant { get; set; }
         public Grille Grille { get; set; }
-        public Challenge ?Challenge { get; set; }
 
         public Partie(Joueur J1, Joueur J2, Configuration config)
         {
@@ -24,7 +23,6 @@
             Configuration = config;
             Gagnant = null;
             Grille = new Grille(config.TailleGrille);
-            Challenge = null;
         }
     }
 }

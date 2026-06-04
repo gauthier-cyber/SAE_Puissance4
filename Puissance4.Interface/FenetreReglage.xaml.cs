@@ -155,9 +155,19 @@ namespace Puissance4.Interface
                 TempsReflexion = (int)SliderTempsReflexion.Value;
             }
 
+            bool modeChallenge;
+            if (RadioBtnChallengeOn.IsChecked == true)
+            {
+                modeChallenge = true;
+            }
+            else
+            {
+                modeChallenge = false;
+            }
+
             Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!, FormeJoueur!, TempsReflexion);
 
-            FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config);
+            FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config, modeChallenge);
             fenetreJeu.Show();
             this.Close();
         }
