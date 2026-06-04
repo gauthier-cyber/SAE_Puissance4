@@ -36,6 +36,7 @@ namespace Puissance4.Interface
             }
 
             DessinerGrille();
+            this.KeyDown += Window_KeyDown;
         }
 
         public FenetreJeu(Joueur J1, Joueur J2, Configuration config, Challenge challenge)
@@ -69,6 +70,81 @@ namespace Puissance4.Interface
             FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie, Challenge!);
             fenetreVictoire.Show();
             this.Close();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            int colonne = -1;
+
+            // Association simple entre la touche et l'index de la colonne
+            switch (e.Key)
+            {
+                case Key.A: colonne = 0; break;
+                case Key.Z: colonne = 1; break;
+                case Key.E: colonne = 2; break;
+                case Key.R: colonne = 3; break;
+                case Key.T: colonne = 4; break;
+                case Key.Y: colonne = 5; break;
+                case Key.U: colonne = 6; break;
+                case Key.I: colonne = 7; break;
+                case Key.O: colonne = 8; break;
+                case Key.P: colonne = 9; break;
+                case Key.Q: colonne = 10; break;
+                case Key.S: colonne = 11; break;
+            }
+
+            // Si la touche pressée fait partie de nos lettres
+            if (colonne != -1)
+            {
+                // On cherche la ligne la plus basse (en partant de la fin)
+                for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
+                {
+                    // On vérifie s'il y a déjà un visuel à cet emplacement
+                    bool caseOccupee = false;
+                    foreach (UIElement enfant in GridTableJeu.Children)
+                    {
+                        // ligne + 1 car dans ton DessinerGrille tu as fait : i + 1 (à cause de l'en-tête)
+                        if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                        {
+                            // On regarde si la case contient déjà un jeton visible (pas transparent)
+                            if (enfant is Border b && b.Child != null && ((Shape)b.Child).Fill != Brushes.Transparent)
+                            {
+                                caseOccupee = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Dès qu'on trouve la ligne la plus basse de libre
+                    if (!caseOccupee)
+                    {
+                        // On récupère la Border de cette case pour colorier son jeton en noir
+                        foreach (UIElement enfant in GridTableJeu.Children)
+                        {
+                            if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                            {
+                                if (enfant is Border b && b.Child is Shape jeton)
+                                {
+                                    if (Partie.JoueurCourant == Partie.Joueur1)
+                                    {
+                                        Brush couleur = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
+                                        jeton.Fill = couleur; // Le jeton devient de la couleur du joueur 1
+                                        Partie.JoueurCourant = Partie.Joueur2; // On change de joueur
+                                    }
+                                    else
+                                    {
+                                        Brush couleur = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
+                                        jeton.Fill = couleur; // Le jeton devient de la couleur du joueur 2
+                                        Partie.JoueurCourant = Partie.Joueur1; // On change de joueur
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
         }
 
         private void DessinerGrille()
@@ -113,7 +189,7 @@ namespace Puissance4.Interface
                         case "Rond":
                             Ellipse jetonRond = new Ellipse
                             {
-                                Fill = Brushes.White,
+                                Fill = Brushes.Transparent,
                                 Width = largeurForme,
                                 Height = largeurForme,
                                 Margin = new Thickness(5)
@@ -124,7 +200,7 @@ namespace Puissance4.Interface
                         case "Triangle":
                             Polygon jetonTriangle = new Polygon
                             {
-                                Fill = Brushes.White,
+                                Fill = Brushes.Transparent,
                                 Points = new PointCollection
                                 {
                                     new Point(largeurForme / 2, 0),
@@ -143,7 +219,7 @@ namespace Puissance4.Interface
 
                             Polygon jetonCroix = new Polygon
                             {
-                                Fill = Brushes.White,
+                                Fill = Brushes.Transparent,
                                 Points = new PointCollection
                                 {
                                     new Point(largeurForme / 2, 0),
@@ -164,7 +240,7 @@ namespace Puissance4.Interface
                         case "Etoile":
                             Polygon jetonEtoile = new Polygon
                             {
-                                Fill = Brushes.White,
+                                Fill = Brushes.Transparent,
                                 Points = new PointCollection
                                 {
                                     new Point(largeurForme / 2, 0),
@@ -187,7 +263,7 @@ namespace Puissance4.Interface
                         case "Carre":
                             Rectangle jetonCarre = new Rectangle
                             {
-                                Fill = Brushes.White,
+                                Fill = Brushes.Transparent,
                                 Width = largeurForme,
                                 Height = largeurForme,
                                 RadiusX = largeurForme / 4,
@@ -201,7 +277,7 @@ namespace Puissance4.Interface
                         case "Losange":
                             Polygon jetonLosange = new Polygon
                             {
-                                Fill = Brushes.White,
+                                Fill = Brushes.Transparent,
                                 Points = new PointCollection
                                 {
                                     new Point(largeurForme / 2, 0),
