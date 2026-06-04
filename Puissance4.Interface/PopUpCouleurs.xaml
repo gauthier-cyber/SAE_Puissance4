@@ -108,9 +108,9 @@
                         BorderBrush="Transparent" BorderThickness="4"
                         MouseLeftButtonDown="BorderFormes_MouseLeftButtonDown" Tag="Croix">
                     <StackPanel Orientation="Horizontal">
-                        <Polygon Points="15,0 19,11 30,15 19,19 15,30 11,19 0,15 11,11"
+                        <Polygon Points="15,0 20,10 30,15 20,20 15,30 10,20 0,15 10,10"
                                  Fill="#bd0000" Margin="4"/>
-                        <Polygon Points="15,0 19,11 30,15 19,19 15,30 11,19 0,15 11,11"
+                        <Polygon Points="15,0 20,10 30,15 20,20 15,30 10,20 0,15 10,10"
                                  Fill="#cafc00" Margin="4"/>
                     </StackPanel>
                 </Border>
@@ -131,8 +131,8 @@
                         BorderBrush="Transparent" BorderThickness="4"
                         MouseLeftButtonDown="BorderFormes_MouseLeftButtonDown" Tag="Carre">
                     <StackPanel Orientation="Horizontal">
-                        <Rectangle Width="30" Height="30" Fill="#bd0000" RadiusX="6" RadiusY="6" Margin="4"/>
-                        <Rectangle Width="30" Height="30" Fill="#cafc00" RadiusX="6" RadiusY="6" Margin="4"/>
+                        <Rectangle Width="30" Height="30" Fill="#bd0000" RadiusX="7.5" RadiusY="7.5" Margin="4"/>
+                        <Rectangle Width="30" Height="30" Fill="#cafc00" RadiusX="7.5" RadiusY="7.5" Margin="4"/>
                     </StackPanel>
                 </Border>
                 <Border x:Name="BorderForme6" Background="#cbc7b7" CornerRadius="20" Padding="8" Margin="4" 
