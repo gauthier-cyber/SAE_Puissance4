@@ -112,38 +112,6 @@
             </Grid>
         </Border>
 
-        <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
-            <Button x:Name="BtnFinirChallenge" Content="Finir le Challenge" Height="40" Width="160" Background="#cbc7b7"
-                    FontFamily="{StaticResource PlaypenSans}" FontSize="16" Foreground="#0a111f" Visibility="Hidden"
-                    HorizontalAlignment="Left" Margin="10" Click="BtnFinirChallenge_Click">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
-                                CornerRadius="10" 
-                                BorderThickness="0">
-                            <ContentPresenter HorizontalAlignment="Center" 
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-
-            <Button x:Name="BtnRelancerPartie" Content="Relancer une partie" Height="40" Width="160" Background="#cbc7b7"
-                    FontFamily="{StaticResource PlaypenSans}" FontSize="16" Foreground="#0a111f" Visibility="Hidden"
-                    HorizontalAlignment="Left" Margin="10" Click="BtnRelancerPartie_Click">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
-                                CornerRadius="10" 
-                                BorderThickness="0">
-                            <ContentPresenter HorizontalAlignment="Center" 
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-        </StackPanel>
-
         <StackPanel Grid.Column="1">
             <TextBlock Text="Puissance 4 !" FontFamily="{StaticResource PlaypenSans}" Foreground="White"
                        FontSize="24" HorizontalAlignment="Center" Margin="5"/>

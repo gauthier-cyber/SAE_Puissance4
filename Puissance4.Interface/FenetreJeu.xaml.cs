@@ -22,30 +22,13 @@ namespace Puissance4.Interface
         public Joueur Joueur2 { get; set; }
         public Configuration Config { get; set; }
         public Partie Partie { get; set; }
-        public Challenge ?Challenge { get; set; }
-        public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
+        public FenetreJeu(Joueur J1, Joueur J2, Configuration config)
         {
             InitializeComponent();
             Joueur1 = J1;
             Joueur2 = J2;
             Config = config;
             Partie = new Partie(Joueur1, Joueur2, Config);
-            if (modeChallenge)
-            {
-                Challenge = new Challenge(0, 0);
-            }
-
-            DessinerGrille();
-        }
-
-        public FenetreJeu(Joueur J1, Joueur J2, Configuration config, Challenge challenge)
-        {
-            InitializeComponent();
-            Joueur1 = J1;
-            Joueur2 = J2;
-            Config = config;
-            Partie = new Partie(Joueur1, Joueur2, Config);
-            Challenge = challenge;
 
             DessinerGrille();
         }
@@ -54,20 +37,6 @@ namespace Puissance4.Interface
         {
             FenetreAccueil fenetreAccueil = new FenetreAccueil();
             fenetreAccueil.Show();
-            this.Close();
-        }
-
-        private void BtnRelancerPartie_Click(object sender, RoutedEventArgs e)
-        {
-            FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config, Challenge!);
-            fenetreJeu.Show();
-            this.Close();
-        }
-
-        private void BtnFinirChallenge_Click(object sender, RoutedEventArgs e)
-        {
-            FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie, Challenge!);
-            fenetreVictoire.Show();
             this.Close();
         }
 
