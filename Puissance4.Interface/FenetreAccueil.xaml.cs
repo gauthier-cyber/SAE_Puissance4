@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Puissance4.Systeme;
 
 namespace Puissance4.Interface
 {
@@ -16,6 +17,9 @@ namespace Puissance4.Interface
     /// </summary>
     public partial class FenetreAccueil : Window
     {
+        public Joueur Joueur1 { get; set; }
+        public Joueur Joueur2 { get; set; }
+
         public FenetreAccueil()
         {
             InitializeComponent();
@@ -64,8 +68,11 @@ namespace Puissance4.Interface
 
         private void BtnJouerA2_Click(object sender, RoutedEventArgs e)
         {
+            Joueur1 = new Joueur("Joueur 1");
+            Joueur2 = new Joueur("Joueur 2");
+
             // Ouvrir la fenêtre de réglages et fermer la fenêtre d'accueil
-            FenetreReglage fenetreReglage = new FenetreReglage();
+            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2);
             fenetreReglage.Show();
             this.Close();
         }
@@ -79,8 +86,11 @@ namespace Puissance4.Interface
 
         private void BtnIA_Click(object sender, RoutedEventArgs e)
         {
+            Joueur1 = new Joueur("Joueur 1");
+            Joueur2 = new Joueur("IA");
+
             // Ouvrir la fenêtre de réglages et fermer la fenêtre d'accueil
-            FenetreReglage fenetreReglage = new FenetreReglage();
+            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2);
             fenetreReglage.Show();
             this.Close();
         }

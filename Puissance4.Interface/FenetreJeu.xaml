@@ -114,8 +114,8 @@
 
         <StackPanel Grid.Column="1">
             <TextBlock Text="Puissance 4 !" FontFamily="{StaticResource PlaypenSans}" Foreground="White"
-                       FontSize="24" HorizontalAlignment="Center" Margin="10"/>
-            <TextBlock FontFamily="{StaticResource PlaypenSans}" FontSize="24" HorizontalAlignment="Center" Margin="10">
+                       FontSize="24" HorizontalAlignment="Center" Margin="5"/>
+            <TextBlock FontFamily="{StaticResource PlaypenSans}" FontSize="24" HorizontalAlignment="Center" Margin="5">
                 <Run Text="C'est au tour de " Foreground="White"/>
                 <Run x:Name="RunTxtBlockAuTourDe" Text="[Joueur 1]" Foreground="#cafc00"/>
             </TextBlock>
