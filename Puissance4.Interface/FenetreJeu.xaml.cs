@@ -36,6 +36,19 @@ namespace Puissance4.Interface
             }
 
             DessinerGrille();
+
+            Brush couleurJ1 = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
+            Brush couleurJ2 = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
+
+            RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
+            RunTxtBlockAuTourDe.Foreground = couleurJ1;
+
+            TxtBlockJoueur1.Text = Partie.Joueur1.Nom;
+            TxtBlockJoueur1.Foreground = couleurJ1;
+            TxtBlockJoueur2.Text = Partie.Joueur2.Nom;
+            TxtBlockJoueur2.Foreground = couleurJ2;
+
+
             this.KeyDown += Window_KeyDown;
         }
 
@@ -130,12 +143,16 @@ namespace Puissance4.Interface
                                         Brush couleur = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
                                         jeton.Fill = couleur; // Le jeton devient de la couleur du joueur 1
                                         Partie.JoueurCourant = Partie.Joueur2; // On change de joueur
+                                        RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
+                                        RunTxtBlockAuTourDe.Foreground = couleur;
                                     }
                                     else
                                     {
                                         Brush couleur = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
                                         jeton.Fill = couleur; // Le jeton devient de la couleur du joueur 2
                                         Partie.JoueurCourant = Partie.Joueur1; // On change de joueur
+                                        RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
+                                        RunTxtBlockAuTourDe.Foreground = couleur;
                                     }
                                 }
                                 break;
