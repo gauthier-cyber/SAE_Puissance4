@@ -27,6 +27,7 @@ namespace Puissance4.Interface
             Partie = partie;
             Challenge = challenge;
 
+            Main();
             EcrireTableauJeu();
         }
 
@@ -35,7 +36,27 @@ namespace Puissance4.Interface
             InitializeComponent();
             Partie = partie;
 
+            Main();
             EcrireTableauJeu();
+        }
+
+        public void Main()
+        {
+            TxtBlockNomJoueur.Text = Partie.Gagnant!.Nom;
+            if (Partie.Gagnant == Partie.Joueur1)
+                TxtBlockNomJoueur.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
+            else
+                TxtBlockNomJoueur.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
+
+            TxtBlockJoueur1.Text = Partie.Joueur1.Nom;
+            TxtBlockJoueur1.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
+            TxtBlockJoueur2.Text = Partie.Joueur2.Nom;
+            TxtBlockJoueur2.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
+
+            if (Challenge == null)
+            {
+                BorderChallenge.Visibility = Visibility.Hidden;
+            }
         }
 
         public void EcrireTableauJeu()

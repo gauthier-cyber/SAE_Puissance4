@@ -16,7 +16,7 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Margin="10,10,0,0" Width="200" Height="100" VerticalAlignment="Top" 
+        <Border x:Name="BorderChallenge" Grid.Column="0" Margin="10,10,0,0" Width="200" Height="100" VerticalAlignment="Top" 
         BorderBrush="#cbc7b7" BorderThickness="4" CornerRadius="20">
             <Grid x:Name="GridScore">
                 <Grid.RowDefinitions>
@@ -55,7 +55,7 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,50">
                 <TextBlock Text="Victoire du " Foreground="White" FontSize="22"/>
-                <TextBlock Text="[Joueur 1]" Foreground="YellowGreen" FontSize="22"/>
+                <TextBlock x:Name="TxtBlockNomJoueur" Text="[Joueur 1]" Foreground="#cafc00" FontSize="22"/>
                 <TextBlock Text=" !" Foreground="White" FontSize="22"/>
             </StackPanel>
 
