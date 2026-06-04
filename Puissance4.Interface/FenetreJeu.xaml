@@ -13,7 +13,7 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Margin="10,10,0,0" Height="200" VerticalAlignment="Top" 
+        <Border x:Name="BorderScore" Grid.Column="0" Margin="10,10,0,0" Height="200" VerticalAlignment="Top" 
                 BorderBrush="#cbc7b7" BorderThickness="4" CornerRadius="20">
             <Grid x:Name="GridScore">
                 <Grid.RowDefinitions>

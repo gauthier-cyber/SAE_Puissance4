@@ -18,11 +18,20 @@ namespace Puissance4.Interface
     /// </summary>
     public partial class FenetreVictoire : Window
     {
+        public Partie Partie { get; set; }
+        public Challenge ?Challenge { get; set; }
+
         public FenetreVictoire(Partie partie, Challenge challenge)
         {
             InitializeComponent();
-            Partie Partie = partie;
-            Challenge Challenge = challenge;
+            Partie = partie;
+            Challenge = challenge;
+        }
+
+        public FenetreVictoire(Partie partie)
+        {
+            InitializeComponent();
+            Partie = partie;
         }
     }
 }

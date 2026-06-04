@@ -21,5 +21,14 @@
             Grille = new Grille(config.TailleGrille);
             JoueurCourant = J1;
         }
+
+        public void FinirPartie(string premier_coup, string coup_decisif, double duree, int nb_coups, Joueur gagnant)
+        {
+            PremierCoup = premier_coup;
+            CoupDecisif = coup_decisif;
+            Duree = duree;
+            NombreCoups = nb_coups;
+            Gagnant = gagnant;
+        }
     }
 }

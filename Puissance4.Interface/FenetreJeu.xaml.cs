@@ -44,6 +44,10 @@ namespace Puissance4.Interface
             {
                 Challenge = new Challenge(0, 0);
             }
+            else
+            {
+                BorderScore.Visibility = Visibility.Hidden;
+            }
 
             Main();
         }
@@ -396,7 +400,21 @@ namespace Puissance4.Interface
         {
             if (Challenge == null)
             {
+                Partie.FinirPartie(premierCoup!, coupDecisif!, DureePartie, nbCoups, Gagnant);
+                FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie);
+                fenetreVictoire.Show();
+                this.Close();
+            }
+            else
+            {
+                Partie.FinirPartie(premierCoup!, coupDecisif!, DureePartie, nbCoups, Gagnant);
+                if (Gagnant == Partie.Joueur1)
+                    Challenge.AjouterPointJoueur(1);
+                else
+                    Challenge.AjouterPointJoueur(2);
 
+                BtnFinirChallenge.Visibility = Visibility.Visible;
+                BtnRelancerPartie.Visibility = Visibility.Visible;
             }
         }
     }

@@ -11,7 +11,7 @@
             ScoreJoueur2 = scoreJ2;
         }
 
-        void AjouterPointJoueur(int joueur)
+        public void AjouterPointJoueur(int joueur)
         {
             if (joueur == 1)
             {
