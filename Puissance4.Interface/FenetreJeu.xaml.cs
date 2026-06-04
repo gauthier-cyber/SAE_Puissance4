@@ -29,6 +29,9 @@ namespace Puissance4.Interface
 
         public string ?premierCoup;
         public string ?coupDecisif;
+        public DateTime DebutPartie;
+        public double DureePartie;
+        public int nbCoups = 0;
 
         public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
         {
@@ -42,6 +45,23 @@ namespace Puissance4.Interface
                 Challenge = new Challenge(0, 0);
             }
 
+            Main();
+        }
+
+        public FenetreJeu(Joueur J1, Joueur J2, Configuration config, Challenge challenge)
+        {
+            InitializeComponent();
+            Joueur1 = J1;
+            Joueur2 = J2;
+            Config = config;
+            Partie = new Partie(Joueur1, Joueur2, Config);
+            Challenge = challenge;
+
+            Main();
+        }
+
+        public void Main()
+        {
             DessinerGrille();
 
             couleurJ1 = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
@@ -55,20 +75,9 @@ namespace Puissance4.Interface
             TxtBlockJoueur2.Text = Partie.Joueur2.Nom;
             TxtBlockJoueur2.Foreground = couleurJ2;
 
+            DebutPartie = DateTime.Now;
 
             this.KeyDown += Window_KeyDown;
-        }
-
-        public FenetreJeu(Joueur J1, Joueur J2, Configuration config, Challenge challenge)
-        {
-            InitializeComponent();
-            Joueur1 = J1;
-            Joueur2 = J2;
-            Config = config;
-            Partie = new Partie(Joueur1, Joueur2, Config);
-            Challenge = challenge;
-
-            DessinerGrille();
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
@@ -170,15 +179,17 @@ namespace Puissance4.Interface
                                         Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
                                     }
 
+                                    nbCoups += 1;
+
                                     if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
                                     {
-                                        string joueur;
+                                        Joueur joueur;
                                         if (Partie.JoueurCourant == Partie.Joueur1)
-                                            joueur = Partie.Joueur2.Nom;
-                                        else 
-                                            joueur = Partie.Joueur1.Nom;
+                                            joueur = Partie.Joueur2;
+                                        else
+                                            joueur = Partie.Joueur1;
 
-                                        coupDecisif = joueur +
+                                        coupDecisif = joueur.Nom +
                                             (colonne == 0 ? "A" :
                                             (colonne == 1 ? "Z" :
                                             (colonne == 2 ? "E" :
@@ -193,7 +204,11 @@ namespace Puissance4.Interface
                                             (colonne == 11 ? "S" :
                                             ""))))))))))));
 
-                                        PartieFini();
+                                        DateTime Fin = DateTime.Now;
+                                        TimeSpan intervalle = Fin - DebutPartie;
+                                        DureePartie = intervalle.TotalSeconds;
+
+                                        PartieFini(joueur);
                                     }
                                 }
                                 break;
@@ -377,7 +392,7 @@ namespace Puissance4.Interface
             }
         }
 
-        private void PartieFini()
+        private void PartieFini(Joueur Gagnant)
         {
             if (Challenge == null)
             {
