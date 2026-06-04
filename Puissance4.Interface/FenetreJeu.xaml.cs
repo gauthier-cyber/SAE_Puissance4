@@ -28,6 +28,7 @@ namespace Puissance4.Interface
         public Brush ?couleurJ2;
 
         public string ?premierCoup;
+        public string ?coupDecisif;
 
         public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
         {
@@ -166,11 +167,34 @@ namespace Puissance4.Interface
                                         RunTxtBlockAuTourDe.Foreground = couleurJ1;
 
                                         // Dans Grille.cs
-                                        Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2)
+                                        Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
                                     }
 
                                     if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
+                                    {
+                                        string joueur;
+                                        if (Partie.JoueurCourant == Partie.Joueur1)
+                                            joueur = Partie.Joueur2.Nom;
+                                        else 
+                                            joueur = Partie.Joueur1.Nom;
+
+                                        coupDecisif = joueur +
+                                            (colonne == 0 ? "A" :
+                                            (colonne == 1 ? "Z" :
+                                            (colonne == 2 ? "E" :
+                                            (colonne == 3 ? "R" :
+                                            (colonne == 4 ? "T" :
+                                            (colonne == 5 ? "Y" :
+                                            (colonne == 6 ? "U" :
+                                            (colonne == 7 ? "I" :
+                                            (colonne == 8 ? "O" :
+                                            (colonne == 9 ? "P" :
+                                            (colonne == 10 ? "Q" :
+                                            (colonne == 11 ? "S" :
+                                            ""))))))))))));
+
                                         PartieFini();
+                                    }
                                 }
                                 break;
                             }
