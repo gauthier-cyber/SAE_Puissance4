@@ -27,6 +27,8 @@ namespace Puissance4.Interface
         public Brush ?couleurJ1;
         public Brush ?couleurJ2;
 
+        public string ?premierCoup;
+
         public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
         {
             InitializeComponent();
@@ -145,23 +147,53 @@ namespace Puissance4.Interface
                                     if (Partie.JoueurCourant == Partie.Joueur1)
                                     {
                                         jeton.Fill = couleurJ1; // Le jeton devient de la couleur du joueur 1
-                                        Partie.JoueurCourant = Partie.Joueur2; // On change de joueur
+
+                                        // On change de joueur
+                                        Partie.JoueurCourant = Partie.Joueur2; 
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
                                         RunTxtBlockAuTourDe.Foreground = couleurJ2;
+
+                                        // Dans Grille.cs
+                                        Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur1);
                                     }
                                     else
                                     {
                                         jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2
-                                        Partie.JoueurCourant = Partie.Joueur1; // On change de joueur
+
+                                        // On change de joueur
+                                        Partie.JoueurCourant = Partie.Joueur1; 
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
                                         RunTxtBlockAuTourDe.Foreground = couleurJ1;
+
+                                        // Dans Grille.cs
+                                        Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2)
                                     }
+
+                                    if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
+                                        PartieFini();
                                 }
                                 break;
                             }
                         }
                         break;
                     }
+                }
+                if (premierCoup == null)
+                {
+                    premierCoup = Partie.Joueur1.Nom +
+                        (colonne == 0 ? "A" :
+                        (colonne == 1 ? "Z" :
+                        (colonne == 2 ? "E" :
+                        (colonne == 3 ? "R" :
+                        (colonne == 4 ? "T" :
+                        (colonne == 5 ? "Y" :
+                        (colonne == 6 ? "U" :
+                        (colonne == 7 ? "I" :
+                        (colonne == 8 ? "O" :
+                        (colonne == 9 ? "P" :
+                        (colonne == 10 ? "Q" :
+                        (colonne == 11 ? "S" :
+                        ""))))))))))));
                 }
             }
         }
@@ -318,6 +350,14 @@ namespace Puissance4.Interface
                     Grid.SetColumn(caseGrille, j);
                     GridTableJeu.Children.Add(caseGrille);
                 }
+            }
+        }
+
+        private void PartieFini()
+        {
+            if (Challenge == null)
+            {
+
             }
         }
     }

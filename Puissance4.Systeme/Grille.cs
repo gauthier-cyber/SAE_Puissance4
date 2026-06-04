@@ -46,6 +46,11 @@
             }
         }
 
+        public void ChangerValeurCase(int ligne, int colonne, EtatCase etat)
+        {
+            Tableau[ligne][colonne] = etat;
+        }
+
         public EtatCase VérifierAlignements(int nbJetons)
         {
             for (int i = 0; i < Lignes; i++)
