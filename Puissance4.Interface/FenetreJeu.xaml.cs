@@ -76,14 +76,118 @@ namespace Puissance4.Interface
                         CornerRadius = new CornerRadius(5)
                     };
 
-                    Ellipse jeton = new Ellipse
+                    int largeurForme = taille - 10;
+                    switch (Partie.Configuration.FormeJoueur)
                     {
-                        Fill = Brushes.White,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    };
+                        case "Rond":
+                            Ellipse jetonRond = new Ellipse
+                            {
+                                Fill = Brushes.White,
+                                Width = largeurForme,
+                                Height = largeurForme,
+                                Margin = new Thickness(5)
+                            };
 
-                    caseGrille.Child = jeton;
+                            caseGrille.Child = jetonRond;
+                            break;
+                        case "Triangle":
+                            Polygon jetonTriangle = new Polygon
+                            {
+                                Fill = Brushes.White,
+                                Points = new PointCollection
+                                {
+                                    new Point(largeurForme / 2, 0),
+                                    new Point(0, largeurForme),
+                                    new Point(largeurForme, largeurForme)
+                                },
+                                Margin = new Thickness(5)
+                            };
+
+                            caseGrille.Child = jetonTriangle;
+                            break;
+
+                        case "Croix":
+                            double tiers = largeurForme / 3;
+                            double deuxTiers = 2 * tiers;
+
+                            Polygon jetonCroix = new Polygon
+                            {
+                                Fill = Brushes.White,
+                                Points = new PointCollection
+                                {
+                                    new Point(largeurForme / 2, 0),
+                                    new Point(deuxTiers, tiers),
+                                    new Point(largeurForme, largeurForme / 2),
+                                    new Point(deuxTiers, deuxTiers),
+                                    new Point(largeurForme / 2 , largeurForme),
+                                    new Point(tiers, deuxTiers),
+                                    new Point(0, largeurForme / 2),
+                                    new Point(tiers, tiers)
+                                },
+                                Margin = new Thickness(5)
+                            };
+
+                            caseGrille.Child = jetonCroix;
+                            break;
+
+                        case "Etoile":
+                            Polygon jetonEtoile = new Polygon
+                            {
+                                Fill = Brushes.White,
+                                Points = new PointCollection
+                                {
+                                    new Point(largeurForme / 2, 0),
+                                    new Point(largeurForme * 0.6, largeurForme * 0.35),
+                                    new Point(largeurForme, largeurForme * 0.4),
+                                    new Point(largeurForme * 0.7, largeurForme * 0.65),
+                                    new Point(largeurForme * 0.8, largeurForme),
+                                    new Point(largeurForme / 2, largeurForme * 0.8),
+                                    new Point(largeurForme * 0.2, largeurForme),
+                                    new Point(largeurForme * 0.3, largeurForme * 0.65),
+                                    new Point(0, largeurForme * 0.4),
+                                    new Point(largeurForme * 0.4, largeurForme * 0.35)
+                                },
+                                Margin = new Thickness(5)
+                            };
+
+                            caseGrille.Child = jetonEtoile;
+                            break;
+
+                        case "Carre":
+                            Rectangle jetonCarre = new Rectangle
+                            {
+                                Fill = Brushes.White,
+                                Width = largeurForme,
+                                Height = largeurForme,
+                                RadiusX = largeurForme / 4,
+                                RadiusY = largeurForme / 4,
+                                Margin = new Thickness(5)
+                            };
+
+                            caseGrille.Child = jetonCarre;
+                            break;
+
+                        case "Losange":
+                            Polygon jetonLosange = new Polygon
+                            {
+                                Fill = Brushes.White,
+                                Points = new PointCollection
+                                {
+                                    new Point(largeurForme / 2, 0),
+                                    new Point(largeurForme, largeurForme / 2),
+                                    new Point(largeurForme / 2, largeurForme),
+                                    new Point(0, largeurForme / 2)
+                                },
+                                Margin = new Thickness(5)
+                            };
+
+                            caseGrille.Child = jetonLosange;
+                            break;
+
+                        default:
+                            break;
+                    }
+
                     Grid.SetRow(caseGrille, i+1);
                     Grid.SetColumn(caseGrille, j);
                     GridTableJeu.Children.Add(caseGrille);
