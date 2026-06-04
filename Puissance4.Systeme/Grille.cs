@@ -44,6 +44,7 @@
                 }
                 Tableau.Add(ligne);
             }
+        }
 
         public EtatCase VérifierAlignements(int nbJetons)
         {
@@ -106,6 +107,5 @@
             // Aucun alignement trouvé
             return EtatCase.Vide;
         }
-    }
     }
 }
