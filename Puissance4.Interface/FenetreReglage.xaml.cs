@@ -165,8 +165,14 @@ namespace Puissance4.Interface
                 modeChallenge = false;
             }
 
-            Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!, FormeJoueur!, TempsReflexion);
+            if (CouleurJoueur1 == null && CouleurJoueur2 == null && FormeJoueur == null)
+            {
+                CouleurJoueur1 = "#bd0000";
+                CouleurJoueur2 = "#cafc00";
+                FormeJoueur = "Rond";
+            }
 
+            Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!, FormeJoueur!, TempsReflexion);
             FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config, modeChallenge);
             fenetreJeu.Show();
             this.Close();
