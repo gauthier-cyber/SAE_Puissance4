@@ -33,6 +33,8 @@ namespace Puissance4.Interface
         public double DureePartie;
         public int nbCoups = 0;
 
+        private bool alignement = false;
+
         public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
         {
             InitializeComponent();
@@ -82,6 +84,12 @@ namespace Puissance4.Interface
             DebutPartie = DateTime.Now;
 
             this.KeyDown += Window_KeyDown;
+
+            if (Challenge != null)
+            {
+                TxtBlockScoreJoueur1.Text = Challenge.ScoreJoueur1.ToString();
+                TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur2.ToString();
+            }
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
@@ -127,7 +135,7 @@ namespace Puissance4.Interface
             }
 
             // Si la touche pressée fait partie de nos lettres et que la colonne est visible
-            if (colonne != -1 && colonne <= Partie.Grille.Lignes)
+            if (colonne != -1 && colonne <= Partie.Grille.Lignes && !alignement)
             {
                 // On cherche la ligne la plus basse (en partant de la fin)
                 for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
@@ -212,6 +220,7 @@ namespace Puissance4.Interface
                                         TimeSpan intervalle = Fin - DebutPartie;
                                         DureePartie = intervalle.TotalSeconds;
 
+                                        alignement = true;
                                         PartieFini(joueur);
                                     }
                                 }
