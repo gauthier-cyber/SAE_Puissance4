@@ -23,6 +23,10 @@ namespace Puissance4.Interface
         public Configuration Config { get; set; }
         public Partie Partie { get; set; }
         public Challenge ?Challenge { get; set; }
+
+        public Brush ?couleurJ1;
+        public Brush ?couleurJ2;
+
         public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
         {
             InitializeComponent();
@@ -37,8 +41,8 @@ namespace Puissance4.Interface
 
             DessinerGrille();
 
-            Brush couleurJ1 = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
-            Brush couleurJ2 = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
+            couleurJ1 = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
+            couleurJ2 = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
 
             RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
             RunTxtBlockAuTourDe.Foreground = couleurJ1;
@@ -106,8 +110,8 @@ namespace Puissance4.Interface
                 case Key.S: colonne = 11; break;
             }
 
-            // Si la touche pressée fait partie de nos lettres
-            if (colonne != -1)
+            // Si la touche pressée fait partie de nos lettres et que la colonne est visible
+            if (colonne != -1 && colonne <= Partie.Grille.Lignes)
             {
                 // On cherche la ligne la plus basse (en partant de la fin)
                 for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
@@ -140,19 +144,17 @@ namespace Puissance4.Interface
                                 {
                                     if (Partie.JoueurCourant == Partie.Joueur1)
                                     {
-                                        Brush couleur = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
-                                        jeton.Fill = couleur; // Le jeton devient de la couleur du joueur 1
+                                        jeton.Fill = couleurJ1; // Le jeton devient de la couleur du joueur 1
                                         Partie.JoueurCourant = Partie.Joueur2; // On change de joueur
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
-                                        RunTxtBlockAuTourDe.Foreground = couleur;
+                                        RunTxtBlockAuTourDe.Foreground = couleurJ2;
                                     }
                                     else
                                     {
-                                        Brush couleur = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
-                                        jeton.Fill = couleur; // Le jeton devient de la couleur du joueur 2
+                                        jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2
                                         Partie.JoueurCourant = Partie.Joueur1; // On change de joueur
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
-                                        RunTxtBlockAuTourDe.Foreground = couleur;
+                                        RunTxtBlockAuTourDe.Foreground = couleurJ1;
                                     }
                                 }
                                 break;
