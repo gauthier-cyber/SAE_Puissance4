@@ -23,13 +23,13 @@ namespace Puissance4.Interface
         public Joueur Joueur2 { get; set; }
         public Configuration Config { get; set; }
         public Partie Partie { get; set; }
-        public Challenge ?Challenge { get; set; }
+        public Challenge? Challenge { get; set; }
 
-        public Brush ?couleurJ1;
-        public Brush ?couleurJ2;
+        public Brush? couleurJ1;
+        public Brush? couleurJ2;
 
-        public string ?premierCoup;
-        public string ?coupDecisif;
+        public string? premierCoup;
+        public string? coupDecisif;
         public DateTime DebutPartie;
         public double DureePartie;
         public int nbCoups = 0;
@@ -185,7 +185,12 @@ namespace Puissance4.Interface
                                             }
                                             else if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Intelligent)
                                             {
-                                                // IA Intelligent
+                                                // On bloque les touches pendant que l'IA "reflechit"
+                                                alignement = true;
+                                                await Task.Delay(2000);
+                                                alignement = false;
+
+                                                JouerIntelligent();
                                             }
                                             else
                                             {
@@ -204,7 +209,7 @@ namespace Puissance4.Interface
                                         jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2
 
                                         // On change de joueur
-                                        Partie.JoueurCourant = Partie.Joueur1; 
+                                        Partie.JoueurCourant = Partie.Joueur1;
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
                                         RunTxtBlockAuTourDe.Foreground = couleurJ1;
 
@@ -324,6 +329,96 @@ namespace Puissance4.Interface
                         }
                         break;
                     }
+                }
+            }
+        }
+
+        // L'IA intelligente joue son coup.
+        // C'est presque la meme chose que JouerIdiot, sauf que la colonne n'est
+        // pas tiree au hasard : on demande a la classe IA de choisir le meilleur
+        // coup grace a l'algorithme Minimax (alpha-beta) de la SAE 2.2.
+        private void JouerIntelligent()
+        {
+            // On cree une IA de niveau Intelligent et on lui donne le nombre de
+            // jetons a aligner (ca vient de la configuration de la partie).
+            IA ia = new IA(NiveauVirtuel.Intelligent, Partie.Configuration.NbJetonAAligner);
+
+            // L'IA nous renvoie le numero de la colonne ou elle veut jouer.
+            int colonne = ia.ChoisirColonne(Partie.Grille);
+
+            // Si l'IA ne peut pas jouer (grille pleine), on arrete.
+            if (colonne == -1)
+                return;
+
+            // On cherche la ligne la plus basse de libre dans cette colonne.
+            for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
+            {
+                // On verifie si la case est deja occupee par un jeton visible.
+                bool caseOccupee = false;
+                foreach (UIElement enfant in GridTableJeu.Children)
+                {
+                    // ligne + 1 a cause de l'en-tete dans DessinerGrille.
+                    if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                    {
+                        if (enfant is Border b && b.Child != null && ((Shape)b.Child).Fill != Brushes.Transparent)
+                        {
+                            caseOccupee = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Des qu'on trouve la ligne la plus basse de libre.
+                if (!caseOccupee)
+                {
+                    // On recupere la Border de cette case pour colorier son jeton.
+                    foreach (UIElement enfant in GridTableJeu.Children)
+                    {
+                        if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                        {
+                            if (enfant is Border b && b.Child is Shape jeton)
+                            {
+                                jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2 (l'IA)
+
+                                // On redonne la main au joueur 1.
+                                RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
+                                RunTxtBlockAuTourDe.Foreground = couleurJ1;
+
+                                // Dans Grille.cs
+                                Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
+
+                                nbCoups += 1;
+
+                                // On verifie si l'IA vient de gagner avec ce coup.
+                                if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
+                                {
+                                    coupDecisif = Partie.Joueur2.Nom +
+                                        (colonne == 0 ? "A" :
+                                        (colonne == 1 ? "Z" :
+                                        (colonne == 2 ? "E" :
+                                        (colonne == 3 ? "R" :
+                                        (colonne == 4 ? "T" :
+                                        (colonne == 5 ? "Y" :
+                                        (colonne == 6 ? "U" :
+                                        (colonne == 7 ? "I" :
+                                        (colonne == 8 ? "O" :
+                                        (colonne == 9 ? "P" :
+                                        (colonne == 10 ? "Q" :
+                                        (colonne == 11 ? "S" :
+                                        ""))))))))))));
+
+                                    DateTime Fin = DateTime.Now;
+                                    TimeSpan intervalle = Fin - DebutPartie;
+                                    DureePartie = intervalle.TotalSeconds;
+
+                                    alignement = true;
+                                    PartieFini(Partie.Joueur2);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    break;
                 }
             }
         }
@@ -476,7 +571,7 @@ namespace Puissance4.Interface
                             break;
                     }
 
-                    Grid.SetRow(caseGrille, i+1);
+                    Grid.SetRow(caseGrille, i + 1);
                     Grid.SetColumn(caseGrille, j);
                     GridTableJeu.Children.Add(caseGrille);
                 }
@@ -505,7 +600,7 @@ namespace Puissance4.Interface
                     Challenge.AjouterPointJoueur(2);
                     TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur1.ToString();
                 }
-                
+
 
                 BtnFinirChallenge.Visibility = Visibility.Visible;
                 BtnRelancerPartie.Visibility = Visibility.Visible;
