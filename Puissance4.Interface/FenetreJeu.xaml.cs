@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Puissance4.Systeme;
+using System.Threading.Tasks;
 
 namespace Puissance4.Interface
 {
@@ -113,7 +114,7 @@ namespace Puissance4.Interface
             this.Close();
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private async void Window_KeyDown(object sender, KeyEventArgs e)
         {
             int colonne = -1;
 
@@ -135,7 +136,7 @@ namespace Puissance4.Interface
             }
 
             // Si la touche pressée fait partie de nos lettres et que la colonne est visible
-            if (colonne != -1 && colonne <= Partie.Grille.Lignes && !alignement)
+            if (colonne != -1 && colonne <= Partie.Grille.Colonnes && !alignement)
             {
                 // On cherche la ligne la plus basse (en partant de la fin)
                 for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
@@ -169,14 +170,34 @@ namespace Puissance4.Interface
                                     if (Partie.JoueurCourant == Partie.Joueur1)
                                     {
                                         jeton.Fill = couleurJ1; // Le jeton devient de la couleur du joueur 1
-
-                                        // On change de joueur
-                                        Partie.JoueurCourant = Partie.Joueur2; 
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
                                         RunTxtBlockAuTourDe.Foreground = couleurJ2;
 
                                         // Dans Grille.cs
                                         Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur1);
+
+                                        if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) == EtatCase.Vide)
+                                        {
+                                            if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Humain)
+                                            {
+                                                // On change de joueur
+                                                Partie.JoueurCourant = Partie.Joueur2;
+                                            }
+                                            else if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Intelligent)
+                                            {
+                                                // IA Intelligent
+                                            }
+                                            else
+                                            {
+                                                alignement = true;
+                                                await Task.Delay(2000);
+                                                alignement = false;
+
+                                                JouerIdiot();
+                                            }
+                                        }
+                                        else
+                                            Partie.JoueurCourant = Partie.Joueur2;
                                     }
                                     else
                                     {
@@ -246,6 +267,63 @@ namespace Puissance4.Interface
                         (colonne == 10 ? "Q" :
                         (colonne == 11 ? "S" :
                         ""))))))))))));
+                }
+            }
+        }
+
+        private void JouerIdiot()
+        {
+            bool tourIA = true;
+            while (tourIA)
+            {
+                Random rand = new Random();
+                int colonne = rand.Next(Partie.Grille.Colonnes);
+                // On cherche la ligne la plus basse (en partant de la fin)
+                for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
+                {
+                    // On vérifie s'il y a déjà un visuel à cet emplacement
+                    bool caseOccupee = false;
+                    foreach (UIElement enfant in GridTableJeu.Children)
+                    {
+                        // ligne + 1 car dans ton DessinerGrille tu as fait : i + 1 (à cause de l'en-tête)
+                        if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                        {
+                            // On regarde si la case contient déjà un jeton visible (pas transparent)
+                            if (enfant is Border b && b.Child != null && ((Shape)b.Child).Fill != Brushes.Transparent)
+                            {
+                                caseOccupee = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Dès qu'on trouve la ligne la plus basse de libre
+                    if (!caseOccupee)
+                    {
+                        // On récupère la Border de cette case pour colorier son jeton
+                        foreach (UIElement enfant in GridTableJeu.Children)
+                        {
+                            if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                            {
+                                if (enfant is Border b && b.Child is Shape jeton)
+                                {
+                                    jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2
+                                    tourIA = false;
+
+                                    // On change de joueur
+                                    RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
+                                    RunTxtBlockAuTourDe.Foreground = couleurJ1;
+
+                                    // Dans Grille.cs
+                                    Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
+
+                                    nbCoups += 1;
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
                 }
             }
         }
@@ -418,9 +496,16 @@ namespace Puissance4.Interface
             {
                 Partie.FinirPartie(premierCoup!, coupDecisif!, DureePartie, nbCoups, Gagnant);
                 if (Gagnant == Partie.Joueur1)
+                {
                     Challenge.AjouterPointJoueur(1);
+                    TxtBlockScoreJoueur1.Text = Challenge.ScoreJoueur1.ToString();
+                }
                 else
+                {
                     Challenge.AjouterPointJoueur(2);
+                    TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur1.ToString();
+                }
+                
 
                 BtnFinirChallenge.Visibility = Visibility.Visible;
                 BtnRelancerPartie.Visibility = Visibility.Visible;

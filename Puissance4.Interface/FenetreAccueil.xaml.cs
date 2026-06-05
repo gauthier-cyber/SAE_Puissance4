@@ -17,8 +17,8 @@ namespace Puissance4.Interface
     /// </summary>
     public partial class FenetreAccueil : Window
     {
-        public Joueur Joueur1 { get; set; }
-        public Joueur Joueur2 { get; set; }
+        public Joueur ?Joueur1 { get; set; }
+        public Joueur ?Joueur2 { get; set; }
 
         public FenetreAccueil()
         {
@@ -86,8 +86,22 @@ namespace Puissance4.Interface
 
         private void BtnIA_Click(object sender, RoutedEventArgs e)
         {
+            Button btn = (Button)sender;
+            string joueur;
+            NiveauVirtuel niveau;
+            if (btn.Name.Contains("Idiot"))
+            {
+                joueur = "IA Idiot";
+                niveau = NiveauVirtuel.Idiot;
+            }
+            else
+            {
+                joueur = "IA Intellignet";
+                niveau = NiveauVirtuel.Intelligent;
+            }
+
             Joueur1 = new Joueur("Joueur 1");
-            Joueur2 = new Joueur("IA");
+            Joueur2 = new Joueur(joueur, niveau);
 
             // Ouvrir la fenêtre de réglages et fermer la fenêtre d'accueil
             FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2);
