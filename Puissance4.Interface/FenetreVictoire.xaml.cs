@@ -19,7 +19,7 @@ namespace Puissance4.Interface
     public partial class FenetreVictoire : Window
     {
         public Partie Partie { get; set; }
-        public Challenge ?Challenge { get; set; }
+        public Challenge? Challenge { get; set; }
 
         public FenetreVictoire(Partie partie, Challenge challenge)
         {
@@ -77,10 +77,10 @@ namespace Puissance4.Interface
                 GridTableauJeu.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             }
 
-            double taille = (Partie.Grille.Lignes == 6 ? 23 : (Partie.Grille.Lignes == 8 ? 17 : 12)); 
-            for (int ligne = 0; ligne < Partie.Grille.Lignes; ligne++) 
-            { 
-                for (int colonne = 0; colonne < Partie.Grille.Colonnes; colonne++) 
+            double taille = (Partie.Grille.Lignes == 6 ? 23 : (Partie.Grille.Lignes == 8 ? 17 : 12));
+            for (int ligne = 0; ligne < Partie.Grille.Lignes; ligne++)
+            {
+                for (int colonne = 0; colonne < Partie.Grille.Colonnes; colonne++)
                 {
                     EtatCase caseActuel = Partie.Grille.Tableau[ligne][colonne];
                     Brush couleur = (Brush)new BrushConverter().ConvertFromString("#cbc7b7")!;
@@ -219,6 +219,19 @@ namespace Puissance4.Interface
                     GridTableauJeu.Children.Add(caseGrille);
                 }
             }
+        }
+
+        public void BtnAccueil_Click(object sender, RoutedEventArgs e)
+        {
+            FenetreAccueil fenetreAccueil = new FenetreAccueil();
+            fenetreAccueil.Show();
+            this.Close();
+        }
+
+        public void BtnStatistique_Click(object sender, RoutedEventArgs e)
+        {
+            PopUpStatistique popUpStatistique = new PopUpStatistique(Partie);
+            popUpStatistique.Show();
         }
     }
 }

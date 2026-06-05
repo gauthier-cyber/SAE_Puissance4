@@ -17,8 +17,8 @@ namespace Puissance4.Interface
     /// </summary>
     public partial class FenetreAccueil : Window
     {
-        public Joueur Joueur1 { get; set; }
-        public Joueur Joueur2 { get; set; }
+        public Joueur ?Joueur1 { get; set; }
+        public Joueur ?Joueur2 { get; set; }
 
         public FenetreAccueil()
         {
