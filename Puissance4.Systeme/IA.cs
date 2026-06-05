@@ -19,7 +19,7 @@ namespace Puissance4.Systeme
             this.niveau = niveau;
             this.generateur = new Random();
             this.nbJetonsPourGagner = nbJetonsPourGagner;
-            this.profondeurMax = 5;
+            this.profondeurMax = 6;
         }
 
         // methode appelee par la fenetre de jeu, renvoie la colonne choisie
