@@ -388,32 +388,6 @@ namespace Puissance4.Interface
                                 Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
 
                                 nbCoups += 1;
-
-                                // On verifie si l'IA vient de gagner avec ce coup.
-                                if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
-                                {
-                                    coupDecisif = Partie.Joueur2.Nom +
-                                        (colonne == 0 ? "A" :
-                                        (colonne == 1 ? "Z" :
-                                        (colonne == 2 ? "E" :
-                                        (colonne == 3 ? "R" :
-                                        (colonne == 4 ? "T" :
-                                        (colonne == 5 ? "Y" :
-                                        (colonne == 6 ? "U" :
-                                        (colonne == 7 ? "I" :
-                                        (colonne == 8 ? "O" :
-                                        (colonne == 9 ? "P" :
-                                        (colonne == 10 ? "Q" :
-                                        (colonne == 11 ? "S" :
-                                        ""))))))))))));
-
-                                    DateTime Fin = DateTime.Now;
-                                    TimeSpan intervalle = Fin - DebutPartie;
-                                    DureePartie = intervalle.TotalSeconds;
-
-                                    alignement = true;
-                                    PartieFini(Partie.Joueur2);
-                                }
                             }
                             break;
                         }
