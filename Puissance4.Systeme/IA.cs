@@ -3,60 +3,26 @@ using System.Collections.Generic;
 
 namespace Puissance4.Systeme
 {
-
-    //
-    // Cette classe contient toute la logique de l'ordinateur (l'IA).
-    // Elle ne touche JAMAIS a l'affichage : elle renvoie juste un numero de
-    // colonne (un int) que la fenetre de jeu utilisera pour poser le jeton.
-    //
-    // Il y a deux niveaux possibles :
-    //
-    //   - Idiot       : on choisit une colonne AU HASARD parmi les colonnes
-    //                   encore jouables (pas pleines).
-    //
-    //   - Intelligent : on utilise l'algorithme Minimax avec elagage
-    //                   alpha-beta (vu en SAE 2.2) pour choisir le meilleur
-    //                   coup possible. On regarde plusieurs coups a l'avance.
-    //
-    // Convention importante (la meme que dans le front-end) :
-    //   - L'IA joue toujours les jetons "Joueur2" (EtatCase.Joueur2).
-    //   - L'adversaire (l'humain) joue les jetons "Joueur1" (EtatCase.Joueur1).
+    // l'ia choisit juste une colonne et renvoie son numero
+    // elle ne s'occupe pas de l'affichage
+    // niveau idiot = colonne au hasard, niveau intelligent = minimax alpha-beta
+    // l'ia joue les jetons Joueur2, l'humain joue les jetons Joueur1
     public class IA
     {
-        // Niveau de l'IA (Idiot ou Intelligent). On reutilise l'enum NiveauVirtuel
-        // qui existe deja dans Joueur.cs.
-        private NiveauVirtuel niveau;
+        private NiveauVirtuel niveau;     // idiot ou intelligent
+        private Random generateur;        // pour le hasard de l'ia idiote
+        private int profondeurMax;        // nb de coups que l'ia anticipe
+        private int nbJetonsPourGagner;   // combien de jetons a aligner pour gagner
 
-        // Sert a tirer une colonne au hasard pour l'IA idiote.
-        private Random generateur;
-
-        // Profondeur de recherche de l'IA intelligente.
-        // C'est le nombre de coups que l'IA regarde a l'avance.
-        // Plus c'est grand, plus l'IA est forte mais plus c'est lent.
-        // 4 ou 5 est un bon compromis pour rester rapide.
-        private int profondeurMax;
-
-        // Nombre de jetons a aligner pour gagner (4 par defaut, mais peut etre 5).
-        // On le recupere depuis la configuration de la partie.
-        private int nbJetonsPourGagner;
-
-        // Constructeur : on cree une IA en precisant son niveau et le nombre de
-        // jetons a aligner (qui vient de la Configuration de la partie).
         public IA(NiveauVirtuel niveau, int nbJetonsPourGagner)
         {
             this.niveau = niveau;
             this.generateur = new Random();
             this.nbJetonsPourGagner = nbJetonsPourGagner;
-            this.profondeurMax = 4;
+            this.profondeurMax = 5;
         }
 
-        // ====================================================================
-        //  METHODE PRINCIPALE APPELEE PAR LE FRONT-END
-        // ====================================================================
-        //
-        // On lui passe la grille actuelle de la partie, et elle renvoie le
-        // numero de la colonne ou l'IA veut jouer.
-        // Le front-end n'a plus qu'a poser le jeton dans cette colonne.
+        // methode appelee par la fenetre de jeu, renvoie la colonne choisie
         public int ChoisirColonne(Grille grille)
         {
             if (niveau == NiveauVirtuel.Idiot)
@@ -69,75 +35,56 @@ namespace Puissance4.Systeme
             }
         }
 
-        // ====================================================================
-        //  IA IDIOTE : une colonne au hasard parmi les colonnes jouables
-        // ====================================================================
+        // ia idiote : une colonne au hasard parmi celles encore jouables
         private int ChoisirColonneIdiot(Grille grille)
         {
-            // On recupere la liste des colonnes ou on peut encore jouer.
             List<int> colonnesJouables = ColonnesJouables(grille);
 
-            // Si jamais aucune colonne n'est jouable (grille pleine), on
-            // renvoie -1 pour dire "pas de coup possible".
+            // grille pleine, on renvoie -1
             if (colonnesJouables.Count == 0)
             {
                 return -1;
             }
 
-            // On tire un index au hasard dans la liste et on renvoie cette colonne.
             int index = generateur.Next(colonnesJouables.Count);
             return colonnesJouables[index];
         }
 
-        // ====================================================================
-        //  IA INTELLIGENTE : on choisit le meilleur coup avec alpha-beta
-        // ====================================================================
-        //
-        // Pour chaque colonne jouable, on simule le coup de l'IA, puis on
-        // calcule le score de la position avec Minimax (alpha-beta). On garde
-        // la colonne qui donne le meilleur score.
+        // ia intelligente : on teste chaque colonne et on garde celle qui a le meilleur score
         private int ChoisirColonneIntelligent(Grille grille)
         {
             List<int> colonnesJouables = ColonnesJouables(grille);
 
-            // Grille pleine : aucun coup possible.
             if (colonnesJouables.Count == 0)
             {
                 return -1;
             }
 
-            // On part avec un tres mauvais score, qu'on va essayer d'ameliorer.
+            // on part du plus mauvais score possible
             int meilleurScore = int.MinValue;
             int meilleureColonne = colonnesJouables[0];
 
-            // Les bornes de l'elagage alpha-beta. Au depart : alpha = -infini,
-            // beta = +infini. On utilise les plus petites/grandes valeurs d'un int.
+            // alpha = -infini, beta = +infini au debut
             int alpha = int.MinValue;
             int beta = int.MaxValue;
 
-            // On essaie chaque colonne jouable.
             for (int i = 0; i < colonnesJouables.Count; i++)
             {
                 int colonne = colonnesJouables[i];
 
-                // On fait une copie de la grille pour ne pas abimer la vraie partie.
+                // on copie la grille pour tester sans toucher a la vraie partie
                 Grille copie = CopierGrille(grille);
-
-                // On simule le coup de l'IA dans cette colonne.
                 JouerCoup(copie, colonne, EtatCase.Joueur2);
 
-                // C'est maintenant a l'adversaire de jouer, donc le prochain
-                // niveau est un niveau MIN -> estMax = false.
+                // apres notre coup c'est a l'adversaire de jouer, donc estMax = false
                 int score = AlphaBeta(copie, profondeurMax - 1, alpha, beta, false);
 
-                // Si ce coup est meilleur que ce qu'on avait, on le retient.
                 if (score > meilleurScore)
                 {
                     meilleurScore = score;
                     meilleureColonne = colonne;
                 }
 
-                // On met a jour alpha (le meilleur score garanti pour l'IA).
                 if (meilleurScore > alpha)
                 {
                     alpha = meilleurScore;
@@ -147,45 +94,34 @@ namespace Puissance4.Systeme
             return meilleureColonne;
         }
 
-        // ====================================================================
-        //  ALGORITHME MINIMAX AVEC ELAGAGE ALPHA-BETA
-        // ====================================================================
-        //
-        // Cette methode renvoie le score d'une position en regardant plusieurs
-        // coups a l'avance.
-        //   - profondeur : combien de coups il reste a explorer.
-        //   - alpha : meilleur score deja garanti pour l'IA (MAX).
-        //   - beta  : meilleur score deja garanti pour l'adversaire (MIN).
-        //   - estMax : true si c'est a l'IA de jouer, false si c'est l'adversaire.
+        // minimax avec elagage alpha-beta (vu en sae 2.2)
+        // estMax = true quand c'est a l'ia de jouer, false pour l'adversaire
         private int AlphaBeta(Grille grille, int profondeur, int alpha, int beta, bool estMax)
         {
-            // On regarde si quelqu'un a gagne sur cette position.
             EtatCase gagnant = grille.VérifierAlignements(nbJetonsPourGagner);
 
-            // Si l'IA a gagne, c'est une tres bonne position : gros score positif.
-            // On enleve la profondeur pour preferer les victoires rapides.
+            // l'ia gagne, gros score positif (+profondeur pour gagner vite)
             if (gagnant == EtatCase.Joueur2)
             {
                 return 100000 + profondeur;
             }
 
-            // Si l'adversaire a gagne, c'est une tres mauvaise position.
+            // l'adversaire gagne, gros score negatif
             if (gagnant == EtatCase.Joueur1)
             {
                 return -100000 - profondeur;
             }
 
-            // Cas d'arret : plus de profondeur a explorer, ou plus de coup possible.
+            // on s'arrete si plus de profondeur ou plus de coup possible
             List<int> colonnesJouables = ColonnesJouables(grille);
             if (profondeur == 0 || colonnesJouables.Count == 0)
             {
-                // On evalue la position avec notre heuristique.
                 return Evaluer(grille);
             }
 
             if (estMax)
             {
-                // Noeud MAX : c'est l'IA qui joue, elle cherche le plus grand score.
+                // c'est l'ia, elle veut le plus grand score
                 int meilleurScore = int.MinValue;
 
                 for (int i = 0; i < colonnesJouables.Count; i++)
@@ -206,7 +142,7 @@ namespace Puissance4.Systeme
                         alpha = meilleurScore;
                     }
 
-                    // Beta-coupure : MIN ne choisira jamais ce noeud, on arrete.
+                    // coupure : pas la peine de continuer
                     if (beta <= alpha)
                     {
                         break;
@@ -217,7 +153,7 @@ namespace Puissance4.Systeme
             }
             else
             {
-                // Noeud MIN : c'est l'adversaire qui joue, il cherche le plus petit score.
+                // c'est l'adversaire, il veut le plus petit score
                 int meilleurScore = int.MaxValue;
 
                 for (int i = 0; i < colonnesJouables.Count; i++)
@@ -238,7 +174,7 @@ namespace Puissance4.Systeme
                         beta = meilleurScore;
                     }
 
-                    // Alpha-coupure : MAX ne choisira jamais ce noeud, on arrete.
+                    // coupure : pas la peine de continuer
                     if (beta <= alpha)
                     {
                         break;
@@ -249,52 +185,35 @@ namespace Puissance4.Systeme
             }
         }
 
-        // ====================================================================
-        //  HEURISTIQUE : evalue une position (positif = bon pour l'IA)
-        // ====================================================================
-        //
-        // On calcule le score de l'IA moins le score de l'adversaire.
-        // Le score d'un joueur = somme, pour chaque taille de groupe t (de 2 a K),
-        // du nombre de groupes de taille t multiplie par un poids 2^(t-2).
-        // Ainsi : groupe de 2 -> poids 1, groupe de 3 -> poids 2, groupe de 4 -> poids 4...
+        // donne un score a la position : score de l'ia moins score de l'adversaire
+        // un groupe de 2 vaut 1, un groupe de 3 vaut 2, un groupe de 4 vaut 4... (poids 2^(t-2))
         private int Evaluer(Grille grille)
         {
             int scoreIA = 0;
             int scoreAdversaire = 0;
 
-            // On parcourt toutes les tailles de groupe de 2 jusqu'a K (nbJetonsPourGagner).
+            // on regarde les groupes de taille 2 jusqu'a K
             for (int t = 2; t <= nbJetonsPourGagner; t++)
             {
-                // Poids = 2^(t-2). On le calcule avec une simple boucle pour
-                // rester sur des choses vues en cours (pas de Math.Pow).
+                // poids = 2^(t-2), calcule avec une boucle au lieu de Math.Pow
                 int poids = 1;
                 for (int p = 0; p < t - 2; p++)
                 {
                     poids = poids * 2;
                 }
 
-                // On compte les groupes de taille t pour chaque joueur.
                 int nbIA = CompterAlignements(grille, EtatCase.Joueur2, t);
                 int nbAdversaire = CompterAlignements(grille, EtatCase.Joueur1, t);
 
-                // On ajoute leur contribution au score de chaque joueur.
                 scoreIA = scoreIA + poids * nbIA;
                 scoreAdversaire = scoreAdversaire + poids * nbAdversaire;
             }
 
-            // Heuristique globale = score IA - score adversaire.
             return scoreIA - scoreAdversaire;
         }
 
-        // ====================================================================
-        //  COMPTER LES GROUPES DE JETONS ALIGNES
-        // ====================================================================
-        //
-        // On compte combien de groupes de "taille" jetons consecutifs du joueur
-        // donne existent sur la grille, dans les 4 directions :
-        // horizontale, verticale, diagonale descendante et diagonale montante.
-        // C'est la meme idee que VérifierAlignements dans Grille.cs, mais ici
-        // on compte les groupes au lieu de juste detecter une victoire.
+        // compte les groupes de "taille" jetons alignes pour un joueur
+        // on regarde les 4 directions, comme dans VérifierAlignements de Grille.cs
         private int CompterAlignements(Grille grille, EtatCase joueur, int taille)
         {
             int compteur = 0;
@@ -303,14 +222,13 @@ namespace Puissance4.Systeme
             {
                 for (int j = 0; j < grille.Colonnes; j++)
                 {
-                    // On regarde un groupe qui commence a la case (i, j).
-                    // Si la premiere case n'est pas au bon joueur, on passe.
+                    // on part de la case (i,j), si elle n'est pas au bon joueur on passe
                     if (grille.Tableau[i][j] != joueur)
                     {
                         continue;
                     }
 
-                    // 1. Horizontale (vers la droite)
+                    // horizontale (vers la droite)
                     if (j + taille <= grille.Colonnes)
                     {
                         bool aligne = true;
@@ -328,7 +246,7 @@ namespace Puissance4.Systeme
                         }
                     }
 
-                    // 2. Verticale (vers le bas)
+                    // verticale (vers le bas)
                     if (i + taille <= grille.Lignes)
                     {
                         bool aligne = true;
@@ -346,7 +264,7 @@ namespace Puissance4.Systeme
                         }
                     }
 
-                    // 3. Diagonale descendante (vers le bas et la droite)
+                    // diagonale qui descend (bas-droite)
                     if (i + taille <= grille.Lignes && j + taille <= grille.Colonnes)
                     {
                         bool aligne = true;
@@ -364,7 +282,7 @@ namespace Puissance4.Systeme
                         }
                     }
 
-                    // 4. Diagonale montante (vers le haut et la droite)
+                    // diagonale qui monte (haut-droite)
                     if (i - taille + 1 >= 0 && j + taille <= grille.Colonnes)
                     {
                         bool aligne = true;
@@ -387,12 +305,7 @@ namespace Puissance4.Systeme
             return compteur;
         }
 
-        // ====================================================================
-        //  OUTILS UTILITAIRES (utilises par l'IA)
-        // ====================================================================
-
-        // Renvoie la liste des colonnes ou on peut encore jouer (pas pleines).
-        // Une colonne est jouable si sa case du haut (ligne 0) est vide.
+        // liste des colonnes pas encore pleines (la case du haut est vide)
         private List<int> ColonnesJouables(Grille grille)
         {
             List<int> colonnes = new List<int>();
@@ -406,12 +319,10 @@ namespace Puissance4.Systeme
             return colonnes;
         }
 
-        // Simule la chute d'un jeton dans une colonne (gestion de la gravite).
-        // Le jeton se pose sur la ligne libre la plus basse de la colonne.
-        // Renvoie la ligne ou le jeton s'est pose, ou -1 si la colonne est pleine.
+        // fait tomber un jeton dans une colonne (gravite)
+        // renvoie la ligne ou il s'est pose, ou -1 si la colonne est pleine
         private int JouerCoup(Grille grille, int colonne, EtatCase joueur)
         {
-            // On part du bas de la grille et on remonte jusqu'a trouver une case vide.
             for (int ligne = grille.Lignes - 1; ligne >= 0; ligne--)
             {
                 if (grille.Tableau[ligne][colonne] == EtatCase.Vide)
@@ -423,8 +334,7 @@ namespace Puissance4.Systeme
             return -1; // colonne pleine
         }
 
-        // Fait une copie complete de la grille pour pouvoir simuler des coups
-        // sans modifier la vraie grille de la partie.
+        // copie la grille pour tester des coups sans abimer la partie
         private Grille CopierGrille(Grille grille)
         {
             Grille copie = new Grille(grille.Lignes, grille.Colonnes);
