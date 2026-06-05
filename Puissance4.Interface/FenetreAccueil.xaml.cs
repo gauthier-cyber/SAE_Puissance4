@@ -96,7 +96,7 @@ namespace Puissance4.Interface
             }
             else
             {
-                joueur = "IA Intellignet";
+                joueur = "IA Intelligent";
                 niveau = NiveauVirtuel.Intelligent;
             }
 
