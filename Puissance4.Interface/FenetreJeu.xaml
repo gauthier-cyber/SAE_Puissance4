@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Puissance4.Interface"
         mc:Ignorable="d"
         Title="Puissance 4" Height="450" Width="800">
-    <Grid Background="#FF0A111F">
+    <Grid x:Name="GridPrincipal" Background="#FF0A111F">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="3*"/>
@@ -85,6 +85,10 @@
                 <Run x:Name="RunTxtBlockAuTourDe" Text="Joueur 1" Foreground="#cafc00"/>
             </TextBlock>
 
+            <TextBlock x:Name="TxtBlockMinuteur" FontFamily="{StaticResource PlaypenSans}" FontSize="20"
+                       HorizontalAlignment="Center" Margin="5" Foreground="White"
+                       Visibility="Collapsed"/>
+
             <Grid x:Name="GridTableJeu">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -113,7 +117,7 @@
                     <RowDefinition x:Name="Row10" Height="0*"/>
                     <RowDefinition x:Name="Row11" Height="0*"/>
                 </Grid.RowDefinitions>
-                
+
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="A" FontFamily="{StaticResource PlaypenSans}" FontSize="16" 
                            Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="Z" FontFamily="{StaticResource PlaypenSans}" FontSize="16" 
@@ -138,11 +142,11 @@
                            Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <TextBlock Grid.Row="0" Grid.Column="11" Text="S" FontFamily="{StaticResource PlaypenSans}" FontSize="16"
                            Foreground="#ffffff" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                
+
                 <!-- Grille de jeu réalisée par le C# -->
             </Grid>
         </StackPanel>
-        
+
         <ListBox x:Name="ListBoxHistorique" Grid.Column="2" Margin="0,10,10,0" BorderBrush="#FFCBC7B7" 
                  Background="{x:Null}" BorderThickness="4,4,4,4" Height="200" VerticalAlignment="Top">
             <ListBox.Template>

@@ -230,7 +230,13 @@ namespace Puissance4.Interface
 
         public void BtnStatistique_Click(object sender, RoutedEventArgs e)
         {
-            PopUpStatistique popUpStatistique = new PopUpStatistique(Partie);
+            PopUpStatistique popUpStatistique;
+            // Si on est en challenge, on passe aussi le challenge pour afficher le score.
+            if (Challenge != null)
+                popUpStatistique = new PopUpStatistique(Partie, Challenge);
+            else
+                popUpStatistique = new PopUpStatistique(Partie);
+
             popUpStatistique.Show();
         }
     }

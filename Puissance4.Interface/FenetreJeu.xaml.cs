@@ -36,6 +36,10 @@ namespace Puissance4.Interface
 
         private bool alignement = false;
 
+        // Minuteur pour le temps de reflexion par coup.
+        private System.Windows.Threading.DispatcherTimer? minuteur;
+        private int tempsRestant;
+
         public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
         {
             InitializeComponent();
@@ -91,6 +95,104 @@ namespace Puissance4.Interface
                 TxtBlockScoreJoueur1.Text = Challenge.ScoreJoueur1.ToString();
                 TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur2.ToString();
             }
+
+            // On applique les reglages d'accessibilite.
+            AppliquerTailleTexte();
+            AppliquerContraste();
+
+            // Si un temps de reflexion a ete choisi (> 0), on lance le minuteur.
+            if (Partie.Configuration.TempsReflexion > 0)
+            {
+                DemarrerMinuteur();
+            }
+        }
+
+        // On applique la taille de texte choisie aux textes principaux de la fenetre.
+        private void AppliquerTailleTexte()
+        {
+            int taille = Partie.Configuration.TailleTexte;
+
+            RunTxtBlockAuTourDe.FontSize = taille;
+            TxtBlockJoueur1.FontSize = taille;
+            TxtBlockJoueur2.FontSize = taille;
+            TxtBlockScoreJoueur1.FontSize = taille;
+            TxtBlockScoreJoueur2.FontSize = taille;
+        }
+
+        // Si le contraste marque est active, on met un fond noir et un texte blanc
+        // pour que tout soit bien plus lisible.
+        private void AppliquerContraste()
+        {
+            if (Partie.Configuration.ContrasteMarque)
+            {
+                // Fond noir pur (on utilise le Grid racine nomme dans le XAML).
+                GridPrincipal.Background = Brushes.Black;
+
+                // Texte en blanc pur pour le maximum de contraste.
+                TxtBlockJoueur1.Foreground = Brushes.White;
+                TxtBlockJoueur2.Foreground = Brushes.White;
+                TxtBlockScoreJoueur1.Foreground = Brushes.White;
+                TxtBlockScoreJoueur2.Foreground = Brushes.White;
+            }
+        }
+
+        // On prepare et on lance le compte a rebours.
+        // Un DispatcherTimer est un objet qui "sonne" tout seul a intervalle regulier.
+        // Ici : il sonne toutes les secondes, et a chaque fois il appelle Minuteur_Tick.
+        // C'est le meme principe qu'un bouton : un evenement declenche une methode.
+        // La difference, c'est que l'evenement n'est pas un clic, c'est le temps qui passe.
+        private void DemarrerMinuteur()
+        {
+            TxtBlockMinuteur.Visibility = Visibility.Visible;
+
+            tempsRestant = Partie.Configuration.TempsReflexion;
+            TxtBlockMinuteur.Text = "Temps : " + tempsRestant + "s";
+
+            minuteur = new System.Windows.Threading.DispatcherTimer();
+            minuteur.Interval = TimeSpan.FromSeconds(1); // sonne toutes les secondes
+            minuteur.Tick += Minuteur_Tick;              // a chaque sonnerie, on appelle Minuteur_Tick
+            minuteur.Start();
+        }
+
+        // Methode appelee automatiquement par le minuteur, chaque seconde.
+        private void Minuteur_Tick(object? sender, EventArgs e)
+        {
+            tempsRestant = tempsRestant - 1;
+            TxtBlockMinuteur.Text = "Temps : " + tempsRestant + "s";
+
+            if (tempsRestant <= 0)
+            {
+                PasserLeTour(); // le temps est ecoule : le joueur perd son tour
+            }
+        }
+
+        // On remet le compte a rebours au maximum (apres chaque coup joue).
+        private void ReinitialiserMinuteur()
+        {
+            if (minuteur != null)
+            {
+                tempsRestant = Partie.Configuration.TempsReflexion;
+                TxtBlockMinuteur.Text = "Temps : " + tempsRestant + "s";
+            }
+        }
+
+        // Le temps est ecoule : on change de joueur sans poser de jeton.
+        private void PasserLeTour()
+        {
+            if (Partie.JoueurCourant == Partie.Joueur1)
+            {
+                Partie.JoueurCourant = Partie.Joueur2;
+                RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
+                RunTxtBlockAuTourDe.Foreground = couleurJ2;
+            }
+            else
+            {
+                Partie.JoueurCourant = Partie.Joueur1;
+                RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
+                RunTxtBlockAuTourDe.Foreground = couleurJ1;
+            }
+
+            ReinitialiserMinuteur();
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
@@ -114,11 +216,14 @@ namespace Puissance4.Interface
             this.Close();
         }
 
-        private async void Window_KeyDown(object sender, KeyEventArgs e)
+        // =========================================================
+        // GESTION DU CLAVIER
+        // On traduit la touche en numero de colonne, puis on appelle JouerCoup.
+        // =========================================================
+        private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             int colonne = -1;
 
-            // Association simple entre la touche et l'index de la colonne
             switch (e.Key)
             {
                 case Key.A: colonne = 0; break;
@@ -135,144 +240,167 @@ namespace Puissance4.Interface
                 case Key.S: colonne = 11; break;
             }
 
-            // Si la touche pressée fait partie de nos lettres et que la colonne est visible
-            if (colonne != -1 && colonne <= Partie.Grille.Colonnes && !alignement)
+            if (colonne != -1)
             {
-                // On cherche la ligne la plus basse (en partant de la fin)
-                for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
+                JouerCoup(colonne);
+            }
+        }
+
+        // =========================================================
+        // GESTION DE LA SOURIS
+        // Au clic sur une case, on recupere la colonne stockee dans son Tag
+        // (voir DessinerGrille) et on joue le coup.
+        // =========================================================
+        private void Case_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border b && b.Tag is int colonne)
+            {
+                JouerCoup(colonne);
+            }
+        }
+
+        // =========================================================
+        // METHODE COMMUNE : pose un jeton dans la colonne demandee.
+        // Le clavier ET la souris l'appellent.
+        // =========================================================
+        private async void JouerCoup(int colonne)
+        {
+            // On verifie que la colonne existe et que le jeu n'est pas bloque.
+            if (colonne < 0 || colonne >= Partie.Grille.Colonnes || alignement)
+            {
+                return;
+            }
+
+            // On cherche la ligne la plus basse (en partant de la fin).
+            for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
+            {
+                bool caseOccupee = false;
+                foreach (UIElement enfant in GridTableJeu.Children)
                 {
-                    // On vérifie s'il y a déjà un visuel à cet emplacement
-                    bool caseOccupee = false;
+                    // ligne + 1 a cause de l'en-tete dans DessinerGrille.
+                    if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                    {
+                        if (enfant is Border b && b.Child != null && ((Shape)b.Child).Fill != Brushes.Transparent)
+                        {
+                            caseOccupee = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!caseOccupee)
+                {
                     foreach (UIElement enfant in GridTableJeu.Children)
                     {
-                        // ligne + 1 car dans ton DessinerGrille tu as fait : i + 1 (à cause de l'en-tête)
                         if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
                         {
-                            // On regarde si la case contient déjà un jeton visible (pas transparent)
-                            if (enfant is Border b && b.Child != null && ((Shape)b.Child).Fill != Brushes.Transparent)
+                            if (enfant is Border b && b.Child is Shape jeton)
                             {
-                                caseOccupee = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    // Dès qu'on trouve la ligne la plus basse de libre
-                    if (!caseOccupee)
-                    {
-                        // On récupère la Border de cette case pour colorier son jeton en noir
-                        foreach (UIElement enfant in GridTableJeu.Children)
-                        {
-                            if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
-                            {
-                                if (enfant is Border b && b.Child is Shape jeton)
+                                if (Partie.JoueurCourant == Partie.Joueur1)
                                 {
-                                    if (Partie.JoueurCourant == Partie.Joueur1)
+                                    jeton.Fill = couleurJ1;
+                                    RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
+                                    RunTxtBlockAuTourDe.Foreground = couleurJ2;
+
+                                    Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur1);
+
+                                    if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) == EtatCase.Vide)
                                     {
-                                        jeton.Fill = couleurJ1; // Le jeton devient de la couleur du joueur 1
-                                        RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
-                                        RunTxtBlockAuTourDe.Foreground = couleurJ2;
-
-                                        // Dans Grille.cs
-                                        Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur1);
-
-                                        if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) == EtatCase.Vide)
+                                        if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Humain)
                                         {
-                                            if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Humain)
-                                            {
-                                                // On change de joueur
-                                                Partie.JoueurCourant = Partie.Joueur2;
-                                            }
-                                            else if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Intelligent)
-                                            {
-                                                // On bloque les touches pendant que l'IA "reflechit"
-                                                alignement = true;
-                                                await Task.Delay(2000);
-                                                alignement = false;
+                                            Partie.JoueurCourant = Partie.Joueur2;
+                                        }
+                                        else if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Intelligent)
+                                        {
+                                            alignement = true;
+                                            await Task.Delay(2000);
+                                            alignement = false;
 
-                                                JouerIntelligent();
-                                            }
-                                            else
-                                            {
-                                                alignement = true;
-                                                await Task.Delay(2000);
-                                                alignement = false;
-
-                                                JouerIdiot();
-                                            }
+                                            JouerIntelligent();
                                         }
                                         else
-                                            Partie.JoueurCourant = Partie.Joueur2;
+                                        {
+                                            alignement = true;
+                                            await Task.Delay(2000);
+                                            alignement = false;
+
+                                            JouerIdiot();
+                                        }
                                     }
                                     else
-                                    {
-                                        jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2
-
-                                        // On change de joueur
-                                        Partie.JoueurCourant = Partie.Joueur1;
-                                        RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
-                                        RunTxtBlockAuTourDe.Foreground = couleurJ1;
-
-                                        // Dans Grille.cs
-                                        Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
-                                    }
-
-                                    nbCoups += 1;
-
-                                    if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
-                                    {
-                                        Joueur joueur;
-                                        if (Partie.JoueurCourant == Partie.Joueur1)
-                                            joueur = Partie.Joueur2;
-                                        else
-                                            joueur = Partie.Joueur1;
-
-                                        coupDecisif = joueur.Nom +
-                                            (colonne == 0 ? "A" :
-                                            (colonne == 1 ? "Z" :
-                                            (colonne == 2 ? "E" :
-                                            (colonne == 3 ? "R" :
-                                            (colonne == 4 ? "T" :
-                                            (colonne == 5 ? "Y" :
-                                            (colonne == 6 ? "U" :
-                                            (colonne == 7 ? "I" :
-                                            (colonne == 8 ? "O" :
-                                            (colonne == 9 ? "P" :
-                                            (colonne == 10 ? "Q" :
-                                            (colonne == 11 ? "S" :
-                                            ""))))))))))));
-
-                                        DateTime Fin = DateTime.Now;
-                                        TimeSpan intervalle = Fin - DebutPartie;
-                                        DureePartie = intervalle.TotalSeconds;
-
-                                        alignement = true;
-                                        PartieFini(joueur);
-                                    }
+                                        Partie.JoueurCourant = Partie.Joueur2;
                                 }
-                                break;
+                                else
+                                {
+                                    jeton.Fill = couleurJ2;
+
+                                    Partie.JoueurCourant = Partie.Joueur1;
+                                    RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
+                                    RunTxtBlockAuTourDe.Foreground = couleurJ1;
+
+                                    Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
+                                }
+
+                                nbCoups += 1;
+
+                                // On remet le compte a rebours a zero apres chaque coup joue.
+                                ReinitialiserMinuteur();
+
+                                if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
+                                {
+                                    Joueur joueur;
+                                    if (Partie.JoueurCourant == Partie.Joueur1)
+                                        joueur = Partie.Joueur2;
+                                    else
+                                        joueur = Partie.Joueur1;
+
+                                    coupDecisif = joueur.Nom + LettreColonne(colonne);
+
+                                    DateTime Fin = DateTime.Now;
+                                    TimeSpan intervalle = Fin - DebutPartie;
+                                    DureePartie = intervalle.TotalSeconds;
+
+                                    alignement = true;
+
+                                    // La partie est finie : on arrete le minuteur.
+                                    if (minuteur != null)
+                                        minuteur.Stop();
+
+                                    PartieFini(joueur);
+                                }
                             }
+                            break;
                         }
-                        break;
                     }
+                    break;
                 }
-                if (premierCoup == null)
-                {
-                    premierCoup = Partie.Joueur1.Nom +
-                        (colonne == 0 ? "A" :
-                        (colonne == 1 ? "Z" :
-                        (colonne == 2 ? "E" :
-                        (colonne == 3 ? "R" :
-                        (colonne == 4 ? "T" :
-                        (colonne == 5 ? "Y" :
-                        (colonne == 6 ? "U" :
-                        (colonne == 7 ? "I" :
-                        (colonne == 8 ? "O" :
-                        (colonne == 9 ? "P" :
-                        (colonne == 10 ? "Q" :
-                        (colonne == 11 ? "S" :
-                        ""))))))))))));
-                }
+            }
+
+            if (premierCoup == null)
+            {
+                premierCoup = Partie.Joueur1.Nom + LettreColonne(colonne);
+            }
+        }
+
+        // Transforme un numero de colonne en lettre du clavier (pour l'affichage des coups).
+        // Avant, ce gros bloc de "? :" etait recopie deux fois. La on l'ecrit une seule fois.
+        private string LettreColonne(int colonne)
+        {
+            switch (colonne)
+            {
+                case 0: return "A";
+                case 1: return "Z";
+                case 2: return "E";
+                case 3: return "R";
+                case 4: return "T";
+                case 5: return "Y";
+                case 6: return "U";
+                case 7: return "I";
+                case 8: return "O";
+                case 9: return "P";
+                case 10: return "Q";
+                case 11: return "S";
+                default: return "";
             }
         }
 
@@ -323,6 +451,9 @@ namespace Puissance4.Interface
                                     Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
 
                                     nbCoups += 1;
+
+                                    // On remet le compte a rebours a zero apres le coup de l'IA.
+                                    ReinitialiserMinuteur();
                                 }
                                 break;
                             }
@@ -388,6 +519,9 @@ namespace Puissance4.Interface
                                 Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
 
                                 nbCoups += 1;
+
+                                // On remet le compte a rebours a zero apres le coup de l'IA.
+                                ReinitialiserMinuteur();
                             }
                             break;
                         }
@@ -545,6 +679,11 @@ namespace Puissance4.Interface
                             break;
                     }
 
+                    // On retient le numero de colonne dans la Border pour le
+                    // retrouver au clic, et on abonne la case au clic de la souris.
+                    caseGrille.Tag = j;
+                    caseGrille.MouseLeftButtonDown += Case_MouseLeftButtonDown;
+
                     Grid.SetRow(caseGrille, i + 1);
                     Grid.SetColumn(caseGrille, j);
                     GridTableJeu.Children.Add(caseGrille);
@@ -572,7 +711,7 @@ namespace Puissance4.Interface
                 else
                 {
                     Challenge.AjouterPointJoueur(2);
-                    TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur1.ToString();
+                    TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur2.ToString();
                 }
 
 

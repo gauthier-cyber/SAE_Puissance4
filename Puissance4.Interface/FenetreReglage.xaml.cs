@@ -20,11 +20,11 @@ namespace Puissance4.Interface
     {
         public Joueur Joueur1 { get; set; }
         public Joueur Joueur2 { get; set; }
-        public Configuration ?Config { get; set; }
+        public Configuration? Config { get; set; }
 
-        private static string ?CouleurJoueur1;
-        private static string ?CouleurJoueur2;
-        private static string ?FormeJoueur;
+        private static string? CouleurJoueur1;
+        private static string? CouleurJoueur2;
+        private static string? FormeJoueur;
 
         public FenetreReglage(Joueur J1, Joueur J2)
         {
@@ -57,7 +57,12 @@ namespace Puissance4.Interface
 
         private void SliderTailleTexte_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            // On affiche la valeur du curseur a cote.
             TxtBlockTailleTexte.Text = ((int)SliderTailleTexte.Value).ToString();
+
+            // On applique tout de suite cette taille a l'apercu (le petit nombre affiche),
+            // pour que l'utilisateur voie l'effet du curseur en direct.
+            TxtBlockTailleTexte.FontSize = (int)SliderTailleTexte.Value;
         }
 
         private void BorderCouleursFormesJetons_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -140,7 +145,6 @@ namespace Puissance4.Interface
             else if (ComboBoxItemTailleGrille8_9.IsSelected)
             {
                 TailleGrille = (8, 9);
-
             }
             else if (ComboBoxItemTailleGrille10_12.IsSelected)
             {
@@ -149,11 +153,19 @@ namespace Puissance4.Interface
 
             int NbJetonAAligner = (int)SliderNbJetonAAligner.Value;
 
+            // Temps de reflexion : on le prend SEULEMENT si la case est cochee.
+            // (Avant la condition etait inversee : le temps n'etait jamais pris en compte.)
             int TempsReflexion = 0;
-            if (CheckBoxTempsReflexion.IsChecked == false)
+            if (CheckBoxTempsReflexion.IsChecked == true)
             {
                 TempsReflexion = (int)SliderTempsReflexion.Value;
             }
+
+            // On lit la taille du texte choisie au curseur.
+            int TailleTexte = (int)SliderTailleTexte.Value;
+
+            // On lit si le contraste marque est active (bouton On coche).
+            bool ContrasteMarque = (RadioBtnContrasteMarqueOn.IsChecked == true);
 
             bool modeChallenge;
             if (RadioBtnChallengeOn.IsChecked == true)
@@ -172,7 +184,9 @@ namespace Puissance4.Interface
                 FormeJoueur = "Rond";
             }
 
-            Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!, FormeJoueur!, TempsReflexion);
+            // On passe maintenant la taille du texte et le contraste a la configuration.
+            Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!,
+                                       FormeJoueur!, TempsReflexion, TailleTexte, ContrasteMarque);
             FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config, modeChallenge);
             fenetreJeu.Show();
             this.Close();
@@ -181,7 +195,8 @@ namespace Puissance4.Interface
         private void CacherFormesSauf(string forme)
         {
             string[] formes = { "Rond", "Triangle", "Croix", "Etoile", "Carre", "Losange" };
-            foreach (string s in formes) {
+            foreach (string s in formes)
+            {
                 if (s != forme)
                 {
                     if (s == "Rond")
