@@ -150,7 +150,7 @@ namespace Puissance4.Interface
             int NbJetonAAligner = (int)SliderNbJetonAAligner.Value;
 
             int TempsReflexion = 0;
-            if (CheckBoxTempsReflexion.IsChecked == false)
+            if (CheckBoxTempsReflexion.IsChecked == true)
             {
                 TempsReflexion = (int)SliderTempsReflexion.Value;
             }
