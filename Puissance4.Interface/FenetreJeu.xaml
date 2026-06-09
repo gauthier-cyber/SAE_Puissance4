@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Puissance4.Interface"
         mc:Ignorable="d"
-        Title="Puissance 4" Height="450" Width="800">
+        Title="Puissance 4" Height="550" Width="800">
     <Grid Background="#FF0A111F">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -145,11 +145,14 @@
         </StackPanel>
         
         <ListBox x:Name="ListBoxHistorique" Grid.Column="2" Margin="0,10,10,0" BorderBrush="#FFCBC7B7" 
-                 Background="{x:Null}" BorderThickness="4,4,4,4" Height="200" VerticalAlignment="Top">
+                 Background="{x:Null}" BorderThickness="4,4,4,4" Height="200" VerticalAlignment="Top"
+                 FontFamily="{StaticResource PlaypenSans}" FontSize="16" Foreground="White">
             <ListBox.Template>
                 <ControlTemplate TargetType="ListBox">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="20"/>
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="20">
+                        <ItemsPresenter />
+                    </Border>
                 </ControlTemplate>
             </ListBox.Template>
         </ListBox>
