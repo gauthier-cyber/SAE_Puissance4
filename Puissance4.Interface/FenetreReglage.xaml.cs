@@ -14,17 +14,17 @@ using Puissance4.Systeme;
 namespace Puissance4.Interface
 {
     /// <summary>
-    /// Logique d'interaction pour FenetreReglage.xaml
+    /// fenêtre de réglages
     /// </summary>
     public partial class FenetreReglage : Window
     {
         public Joueur Joueur1 { get; set; }
         public Joueur Joueur2 { get; set; }
-        public Configuration ?Config { get; set; }
+        public Configuration? Config { get; set; }
 
-        private static string ?CouleurJoueur1;
-        private static string ?CouleurJoueur2;
-        private static string ?FormeJoueur;
+        private static string? CouleurJoueur1;
+        private static string? CouleurJoueur2;
+        private static string? FormeJoueur;
         private bool ContrasteMarque = false;
         private int TailleTexte = 0;
 
@@ -49,8 +49,7 @@ namespace Puissance4.Interface
             ContrasteMarque = contrasteMarque;
             TailleTexte = tailleTexte;
 
-            // Ajuste la taille de police de la fenêtre et des éléments enfants en fonction du paramètre tailleTexte.
-            // On utilise un multiplicateur basé sur la valeur choisie (petit/moyen/grand).
+            // on change la taille du texte selon le réglage petit/moyen/grand
             double baseFontSize = SystemFonts.MessageFontSize;
             double multiplier = (TailleTexte >= 6) ? 1.6 : (TailleTexte <= -6) ? 0.8 : 1.0;
             double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
@@ -66,7 +65,7 @@ namespace Puissance4.Interface
             }
             else
             {
-                // ensure radio buttons use white foreground when not in high contrast
+                // les boutons radio en blanc quand on n'est pas en contraste fort
                 RadioBtnChallengeOn.Foreground = Brushes.White;
                 RadioBtnChallengeOff.Foreground = Brushes.White;
                 RadioBtnContrasteMarqueOn.Foreground = Brushes.White;
@@ -78,7 +77,7 @@ namespace Puissance4.Interface
 
             if (contrasteMarque)
             {
-                // set radio buttons to black in high contrast
+                // les boutons radio en noir quand on est en contraste fort
                 RadioBtnChallengeOn.Foreground = Brushes.Black;
                 RadioBtnChallengeOff.Foreground = Brushes.Black;
                 RadioBtnContrasteMarqueOn.Foreground = Brushes.Black;
@@ -113,7 +112,7 @@ namespace Puissance4.Interface
 
         private void BorderCouleursFormesJetons_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            PopUpCouleurs popUpCouleurs = new PopUpCouleurs(ContrasteMarque, TailleTexte);
+            PopUpCouleurs popUpCouleurs = new PopUpCouleurs(ContrasteMarque);
             popUpCouleurs.ShowDialog();
 
             string couleurs = popUpCouleurs.SelectionCouleurs;
@@ -242,7 +241,7 @@ namespace Puissance4.Interface
             {
                 tailleTexte = 6;
             }
-        
+
 
             Config = new Configuration(TailleGrille, NbJetonAAligner, CouleurJoueur1!, CouleurJoueur2!, FormeJoueur!, TempsReflexion);
             FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config, modeChallenge, contrasteMarque, tailleTexte);
@@ -253,7 +252,8 @@ namespace Puissance4.Interface
         private void CacherFormesSauf(string forme)
         {
             string[] formes = { "Rond", "Triangle", "Croix", "Etoile", "Carre", "Losange" };
-            foreach (string s in formes) {
+            foreach (string s in formes)
+            {
                 if (s != forme)
                 {
                     if (s == "Rond")

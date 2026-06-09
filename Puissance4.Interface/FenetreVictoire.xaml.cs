@@ -14,7 +14,7 @@ using Puissance4.Systeme;
 namespace Puissance4.Interface
 {
     /// <summary>
-    /// Logique d'interaction pour FenetreVictoire.xaml
+    /// fenêtre de victoire
     /// </summary>
     public partial class FenetreVictoire : Window
     {
@@ -40,26 +40,26 @@ namespace Puissance4.Interface
             EcrireTableauJeu();
         }
 
-        public FenetreVictoire(Partie partie, Challenge challenge, bool contrasteMarque, int tailleTexte)
+        public FenetreVictoire(Partie partie, Challenge challenge, bool contrasteMarque)
         {
             InitializeComponent();
             Partie = partie;
             Challenge = challenge;
-            Main(contrasteMarque, tailleTexte);
+            Main(contrasteMarque, 0);
             EcrireTableauJeu();
         }
 
-        public FenetreVictoire(Partie partie, bool contrasteMarque, int tailleTexte)
+        public FenetreVictoire(Partie partie, bool contrasteMarque)
         {
             InitializeComponent();
             Partie = partie;
-            Main(contrasteMarque, tailleTexte);
+            Main(contrasteMarque, 0);
             EcrireTableauJeu();
         }
 
         public void Main(bool contrasteMarque, int tailleTexte)
         {
-            // Si la fenêtre est ouverte depuis un Challenge, déterminer le vainqueur global (ou match nul)
+            // si on sort d'un challenge, on cherche le grand gagnant ou un match nul
             if (Challenge != null)
             {
                 if (Challenge.ScoreJoueur1 > Challenge.ScoreJoueur2)
@@ -76,10 +76,10 @@ namespace Puissance4.Interface
                 }
             }
 
-            // Afficher le nom du vainqueur (ou "Match nul") et choisir la couleur appropriée
+            // on affiche le nom du gagnant ou "match nul" avec la bonne couleur
             if (Partie.Gagnant != null && Partie.Gagnant.Nom == "Match nul")
             {
-                // afficher uniquement "Match nul"
+                // on montre seulement le match nul
                 StackVictoire.Visibility = Visibility.Collapsed;
                 TxtMatchNul.Visibility = Visibility.Visible;
             }
@@ -102,6 +102,7 @@ namespace Puissance4.Interface
 
             if (Challenge == null)
             {
+                // on cache la zone challenge s'il n'y a pas de challenge
                 BorderChallenge.Visibility = Visibility.Hidden;
             }
 
@@ -118,7 +119,7 @@ namespace Puissance4.Interface
                 this.Background = Brushes.White;
                 this.FontFamily = new FontFamily("Verdana");
                 this.Foreground = Brushes.Black;
-                // boutons
+                // les boutons
                 if (BtnAccueil != null) BtnAccueil.Foreground = Brushes.Black;
                 if (BtnStatistique != null) BtnStatistique.Foreground = Brushes.Black;
             }
@@ -130,13 +131,13 @@ namespace Puissance4.Interface
             GridTableauJeu.RowDefinitions.Clear();
             GridTableauJeu.ColumnDefinitions.Clear();
 
-            // 2. On crée dynamiquement les définitions de lignes
+            // on crée les lignes une par une
             for (int i = 0; i < Partie.Grille.Lignes; i++)
             {
                 GridTableauJeu.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             }
 
-            // 3. On crée dynamiquement les définitions de colonnes
+            // on crée les colonnes une par une
             for (int i = 0; i < Partie.Grille.Colonnes; i++)
             {
                 GridTableauJeu.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -288,14 +289,14 @@ namespace Puissance4.Interface
 
         public void BtnAccueil_Click(object sender, RoutedEventArgs e)
         {
-            FenetreAccueil fenetreAccueil = new FenetreAccueil(ContrasteMarque, TailleTexte);
+            FenetreAccueil fenetreAccueil = new FenetreAccueil(ContrasteMarque);
             fenetreAccueil.Show();
             this.Close();
         }
 
         public void BtnStatistique_Click(object sender, RoutedEventArgs e)
         {
-            PopUpStatistique popUpStatistique = new PopUpStatistique(Partie, ContrasteMarque, TailleTexte);
+            PopUpStatistique popUpStatistique = new PopUpStatistique(Partie, ContrasteMarque);
             popUpStatistique.Show();
         }
     }

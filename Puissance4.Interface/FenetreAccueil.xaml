@@ -83,7 +83,7 @@
 
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Quel est le niveau de l'IA ?" FontSize="20" 
                    VerticalAlignment="Center" Margin="10,0,0,0"/>
-                
+
                 <Button x:Name="BtnIAIdiot" Grid.Row="2" Grid.Column="0" Content="Idiot" Height="40" Width="150" Background="#cbc7b7"
                         Foreground="#FF0A111F" FontSize="20" BorderThickness="0"
                         Click="BtnIA_Click">

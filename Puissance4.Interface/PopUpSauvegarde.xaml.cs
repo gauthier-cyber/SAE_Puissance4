@@ -35,7 +35,7 @@ namespace Puissance4.Interface
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
-            // Faire apparaître un message d'erreur "Il n'y a pas de sauvegarde disponible"
+            // on prévient qu'il n'y a aucune sauvegarde à charger
             MessageBox.Show("Il n'y a pas de sauvegarde disponible");
         }
     }

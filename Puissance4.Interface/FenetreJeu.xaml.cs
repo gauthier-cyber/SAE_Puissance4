@@ -60,26 +60,26 @@ namespace Puissance4.Interface
             Main(ContrasteMarque, TailleTexte);
         }
 
-        // Destructeur : tentative de nettoyage si l'objet est collecté
+        // on essaie de tout nettoyer quand l'objet est supprimé
         ~FenetreJeu()
         {
             try
             {
-                StopTimer();
+                ArreterTimer();
                 if (timerTempsReflexion != null)
                     timerTempsReflexion = null;
             }
             catch { }
         }
 
-        // Nettoyage immédiat lors de la fermeture de la fenêtre
+        // on nettoie tout de suite quand on ferme la fenêtre
         protected override void OnClosing(CancelEventArgs e)
         {
             try
             {
-                StopTimer();
+                ArreterTimer();
                 this.KeyDown -= Window_KeyDown;
-                // clear UI elements to help GC
+                // on vide les éléments visuels
                 if (GridTableJeu != null)
                     GridTableJeu.Children.Clear();
                 if (ListBoxHistorique != null)
@@ -107,13 +107,13 @@ namespace Puissance4.Interface
             ContrasteMarque = contrasteMarque;
             TailleTexte = tailleTexte;
 
-            // Ajuste la taille de police en fonction du réglage : on utilise un multiplicateur selon la valeur TailleTexte
+            // on change la taille du texte selon le réglage choisi
             double baseFontSize = SystemFonts.MessageFontSize;
             double multiplier = (TailleTexte >= 6) ? 1.6 : (TailleTexte <= -6) ? 0.8 : 1.0;
             double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
             this.FontSize = newFontSize;
 
-            // Ajuster la taille de la fenêtre pour éviter que le texte n'empiète sur les encadrés
+            // on agrandit la fenêtre pour que le texte ne dépasse pas des cadres
             if (TailleTexte >= 6)
             {
                 this.Width = 1000;
@@ -130,10 +130,10 @@ namespace Puissance4.Interface
                 this.Height = 550;
             }
 
-            // Mettre à jour la taille des contrôles qui ont une taille fixe dans le XAML
-            // Titres et indication du joueur au tour
-            try {
-                // Le TextBlock contenant RunTxtBlockAuTourDe a pour parent un TextBlock
+            // on met à jour la taille des textes déjà placés dans le XAML
+            try
+            {
+                // le texte du joueur au tour est dans un TextBlock parent
                 if (RunTxtBlockAuTourDe != null)
                 {
                     RunTxtBlockAuTourDe.FontSize = this.FontSize;
@@ -141,26 +141,26 @@ namespace Puissance4.Interface
                     if (parentTb != null) parentTb.FontSize = this.FontSize;
                 }
 
-                // Nom des joueurs et scores
+                // les noms des joueurs et leurs scores
                 if (TxtBlockJoueur1 != null) TxtBlockJoueur1.FontSize = this.FontSize;
                 if (TxtBlockJoueur2 != null) TxtBlockJoueur2.FontSize = this.FontSize;
                 if (TxtBlockScoreJoueur1 != null) TxtBlockScoreJoueur1.FontSize = this.FontSize;
                 if (TxtBlockScoreJoueur2 != null) TxtBlockScoreJoueur2.FontSize = this.FontSize;
 
-                // Boutons
+                // les boutons
                 if (BtnFinirChallenge != null) BtnFinirChallenge.FontSize = Math.Max(10, this.FontSize * 0.9);
                 if (BtnRelancerPartie != null) BtnRelancerPartie.FontSize = Math.Max(10, this.FontSize * 0.9);
                 if (BtnQuitter != null) BtnQuitter.FontSize = Math.Max(10, this.FontSize * 0.9);
 
-                // Temps restant et historique
+                // le temps restant et l'historique
                 if (TxtBlockTempsRestant != null) TxtBlockTempsRestant.FontSize = Math.Max(10, this.FontSize);
                 if (ListBoxHistorique != null) ListBoxHistorique.FontSize = Math.Max(10, this.FontSize);
 
-                // Ajuster la hauteur du BorderScore et la hauteur de la ListBox pour laisser de la place
+                // on agrandit le cadre du score et l'historique pour avoir de la place
                 if (BorderScore != null) BorderScore.Height = Math.Max(80, this.FontSize * 6);
                 if (ListBoxHistorique != null) ListBoxHistorique.Height = Math.Max(120, this.FontSize * 12);
 
-                // Ajuster les TextBlocks d'entête de colonnes (ligne 0) dans la grille
+                // on ajuste aussi les lettres au dessus des colonnes (la première ligne)
                 foreach (UIElement enfant in GridTableJeu.Children)
                 {
                     if (enfant is TextBlock tb)
@@ -172,7 +172,8 @@ namespace Puissance4.Interface
                         }
                     }
                 }
-            } catch { }
+            }
+            catch { }
 
             DessinerGrille();
 
@@ -187,14 +188,14 @@ namespace Puissance4.Interface
             TxtBlockJoueur2.Text = Partie.Joueur2.Nom;
             TxtBlockJoueur2.Foreground = couleurJ2;
 
-            // ajouter les messages de connexion des joueurs dans l'historique
+            // on écrit dans l'historique que les deux joueurs ont rejoint
             AjouterHistoriqueRejoindre(Partie.Joueur1.Nom);
             AjouterHistoriqueRejoindre(Partie.Joueur2.Nom);
 
             DebutPartie = DateTime.Now;
 
             this.KeyDown += Window_KeyDown;
-            StartTimerIfNeeded();
+            DemarrerTimerSiBesoin();
 
             if (Challenge != null)
             {
@@ -202,15 +203,15 @@ namespace Puissance4.Interface
                 TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur2.ToString();
             }
 
-            // appliquer les préférences de contraste et de taille de texte
+            // on applique les réglages de contraste et de taille de texte
             if (contrasteMarque)
             {
-                // appliquer un fond blanc
+                // fond blanc
                 this.Background = Brushes.White;
-                // appliquer Verdana a tout les textes
+                // police Verdana partout
                 var verdana = new FontFamily("Verdana");
                 this.FontFamily = verdana;
-                // appliquer une couleur noire a tout les textes
+                // texte en noir partout
                 this.Foreground = Brushes.Black;
                 BtnFinirChallenge.Foreground = Brushes.Black;
                 BtnRelancerPartie.Foreground = Brushes.Black;
@@ -218,7 +219,7 @@ namespace Puissance4.Interface
             }
         }
 
-        private void StartTimerIfNeeded()
+        private void DemarrerTimerSiBesoin()
         {
             if (timerTempsReflexion != null)
             {
@@ -246,7 +247,7 @@ namespace Puissance4.Interface
             }
         }
 
-        private void StopTimer()
+        private void ArreterTimer()
         {
             if (timerTempsReflexion != null)
                 timerTempsReflexion.Stop();
@@ -255,10 +256,10 @@ namespace Puissance4.Interface
 
         private void TimerTempsReflexion_Tick(object? sender, EventArgs e)
         {
-            // Si la partie est déjà terminée, arrêter le timer et ne rien faire
+            // si la partie est déjà finie on arrête le timer et on ne fait rien
             if (Partie != null && Partie.Gagnant != null)
             {
-                StopTimer();
+                ArreterTimer();
                 return;
             }
 
@@ -268,13 +269,13 @@ namespace Puissance4.Interface
 
             if (tempsRestant == 0)
             {
-                StopTimer();
+                ArreterTimer();
                 if (Partie == null || Partie.Gagnant != null) return;
-                AutoPlayOnTimeout();
+                JouerAutoSiTempsEcoule();
             }
         }
 
-        private void AutoPlayOnTimeout()
+        private void JouerAutoSiTempsEcoule()
         {
             if (Partie.JoueurCourant.NiveauVirtuel == NiveauVirtuel.Intelligent)
             {
@@ -329,24 +330,24 @@ namespace Puissance4.Interface
                                     nbCoups += 1;
 
                                     if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
-                                                        {
-                                                            Joueur joueur;
-                                                            if (Partie.JoueurCourant == Partie.Joueur1)
-                                                                joueur = Partie.Joueur2;
-                                                            else
-                                                                joueur = Partie.Joueur1;
+                                    {
+                                        Joueur joueur;
+                                        if (Partie.JoueurCourant == Partie.Joueur1)
+                                            joueur = Partie.Joueur2;
+                                        else
+                                            joueur = Partie.Joueur1;
 
-                                                            DateTime Fin = DateTime.Now;
-                                                            TimeSpan intervalle = Fin - DebutPartie;
-                                                            DureePartie = intervalle.TotalSeconds;
+                                        DateTime Fin = DateTime.Now;
+                                        TimeSpan intervalle = Fin - DebutPartie;
+                                        DureePartie = intervalle.TotalSeconds;
 
-                                                            alignement = true;
-                                                            // arrêter le timer immédiatement avant d'appeler la fin de partie
-                                                            StopTimer();
-                                                            PartieFini(joueur);
-                                                        }
+                                        alignement = true;
+                                        // on arrête le timer juste avant de finir la partie
+                                        ArreterTimer();
+                                        PartieFini(joueur);
+                                    }
 
-                                    StartTimerIfNeeded();
+                                    DemarrerTimerSiBesoin();
                                 }
                                 break;
                             }
@@ -382,7 +383,7 @@ namespace Puissance4.Interface
         {
             int colonne = -1;
 
-            // Association simple entre la touche et l'index de la colonne
+            // on relie chaque touche à un numéro de colonne
             switch (e.Key)
             {
                 case Key.A: colonne = 0; break;
@@ -399,20 +400,20 @@ namespace Puissance4.Interface
                 case Key.S: colonne = 11; break;
             }
 
-            // Si la touche pressée fait partie de nos lettres et que la colonne est visible
+            // on joue seulement si la touche est l'une des nôtres et que la colonne existe
             if (colonne != -1 && colonne <= Partie.Grille.Colonnes && !alignement)
             {
-                // On cherche la ligne la plus basse (en partant de la fin)
+                // on cherche la ligne libre la plus basse en partant du bas
                 for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
                 {
-                    // On vérifie s'il y a déjà un visuel à cet emplacement
+                    // on regarde si la case a déjà quelque chose dessus
                     bool caseOccupee = false;
                     foreach (UIElement enfant in GridTableJeu.Children)
                     {
-                        // ligne + 1 car dans ton DessinerGrille tu as fait : i + 1 (à cause de l'en-tête)
+                        // ligne + 1 car la première ligne sert aux lettres des colonnes
                         if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
                         {
-                            // On regarde si la case contient déjà un jeton visible (pas transparent)
+                            // on vérifie si la case a déjà un jeton visible
                             if (enfant is Border b && b.Child != null && ((Shape)b.Child).Fill != Brushes.Transparent)
                             {
                                 caseOccupee = true;
@@ -421,10 +422,10 @@ namespace Puissance4.Interface
                         }
                     }
 
-                    // Dès qu'on trouve la ligne la plus basse de libre
+                    // dès qu'on trouve la première case libre en bas
                     if (!caseOccupee)
                     {
-                        // On récupère la Border de cette case pour colorier son jeton en noir
+                        // on récupère la case pour colorier son jeton
                         foreach (UIElement enfant in GridTableJeu.Children)
                         {
                             if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
@@ -433,11 +434,11 @@ namespace Puissance4.Interface
                                 {
                                     if (Partie.JoueurCourant == Partie.Joueur1)
                                     {
-                                        jeton.Fill = couleurJ1; // Le jeton devient de la couleur du joueur 1
+                                        jeton.Fill = couleurJ1; // le jeton prend la couleur du joueur 1
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
                                         RunTxtBlockAuTourDe.Foreground = couleurJ2;
 
-                                        // Dans Grille.cs
+                                        // on prévient la grille du nouveau jeton
                                         Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur1);
                                         AjouterHistorique(Partie.Joueur1.Nom, colonne);
 
@@ -445,19 +446,19 @@ namespace Puissance4.Interface
                                         {
                                             if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Humain)
                                             {
-                                                // On change de joueur
+                                                // on passe au joueur 2
                                                 Partie.JoueurCourant = Partie.Joueur2;
-                                                StartTimerIfNeeded();
+                                                DemarrerTimerSiBesoin();
                                             }
                                             else if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Intelligent)
                                             {
-                                                // On bloque les touches pendant que l'IA "reflechit"
+                                                // on bloque les touches pendant que l'IA "réfléchit"
                                                 alignement = true;
-                                                // arrêter le timer du joueur précédent pour éviter que l'IA hérite du temps restant
-                                                StopTimer();
+                                                // on stoppe le timer pour que l'IA ne récupère pas le temps restant
+                                                ArreterTimer();
                                                 await Task.Delay(2000);
-                                                // relancer le timer (réinitialisé) pour l'IA si nécessaire
-                                                StartTimerIfNeeded();
+                                                // on relance un timer tout neuf pour l'IA si besoin
+                                                DemarrerTimerSiBesoin();
                                                 alignement = false;
 
                                                 JouerIntelligent();
@@ -465,11 +466,11 @@ namespace Puissance4.Interface
                                             else
                                             {
                                                 alignement = true;
-                                                // arrêter le timer du joueur précédent pour éviter que l'IA hérite du temps restant
-                                                StopTimer();
+                                                // on stoppe le timer pour que l'IA ne récupère pas le temps restant
+                                                ArreterTimer();
                                                 await Task.Delay(2000);
-                                                // relancer le timer (réinitialisé) pour l'IA si nécessaire
-                                                StartTimerIfNeeded();
+                                                // on relance un timer tout neuf pour l'IA si besoin
+                                                DemarrerTimerSiBesoin();
                                                 alignement = false;
 
                                                 JouerIdiot();
@@ -480,16 +481,16 @@ namespace Puissance4.Interface
                                     }
                                     else
                                     {
-                                        jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2
+                                        jeton.Fill = couleurJ2; // le jeton prend la couleur du joueur 2
 
-                                        // On change de joueur
+                                        // on repasse au joueur 1
                                         Partie.JoueurCourant = Partie.Joueur1;
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
                                         RunTxtBlockAuTourDe.Foreground = couleurJ1;
 
-                                        StartTimerIfNeeded();
+                                        DemarrerTimerSiBesoin();
 
-                                        // Dans Grille.cs
+                                        // on prévient la grille du nouveau jeton
                                         Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
                                         AjouterHistorique(Partie.Joueur2.Nom, colonne);
                                     }
@@ -526,7 +527,7 @@ namespace Puissance4.Interface
                                         alignement = true;
                                         PartieFini(joueur);
                                     }
-                                    StartTimerIfNeeded();
+                                    DemarrerTimerSiBesoin();
                                 }
                                 break;
                             }
@@ -551,7 +552,7 @@ namespace Puissance4.Interface
                         (colonne == 11 ? "S" :
                         ""))))))))))));
                 }
-                StartTimerIfNeeded();
+                DemarrerTimerSiBesoin();
             }
         }
 
@@ -562,17 +563,17 @@ namespace Puissance4.Interface
             {
                 Random rand = new Random();
                 int colonne = rand.Next(Partie.Grille.Colonnes);
-                // On cherche la ligne la plus basse (en partant de la fin)
+                // on cherche la ligne libre la plus basse en partant du bas
                 for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
                 {
-                    // On vérifie s'il y a déjà un visuel à cet emplacement
+                    // on regarde si la case a déjà quelque chose dessus
                     bool caseOccupee = false;
                     foreach (UIElement enfant in GridTableJeu.Children)
                     {
-                        // ligne + 1 car dans ton DessinerGrille tu as fait : i + 1 (à cause de l'en-tête)
+                        // ligne + 1 car la première ligne sert aux lettres des colonnes
                         if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
                         {
-                            // On regarde si la case contient déjà un jeton visible (pas transparent)
+                            // on vérifie si la case a déjà un jeton visible
                             if (enfant is Border b && b.Child != null && ((Shape)b.Child).Fill != Brushes.Transparent)
                             {
                                 caseOccupee = true;
@@ -581,24 +582,24 @@ namespace Puissance4.Interface
                         }
                     }
 
-                    // Dès qu'on trouve la ligne la plus basse de libre
+                    // dès qu'on trouve la première case libre en bas
                     if (!caseOccupee)
                     {
-                        // On récupère la Border de cette case pour colorier son jeton
+                        // on récupère la case pour colorier son jeton
                         foreach (UIElement enfant in GridTableJeu.Children)
                         {
                             if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
                             {
                                 if (enfant is Border b && b.Child is Shape jeton)
                                 {
-                                    jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2
+                                    jeton.Fill = couleurJ2; // le jeton prend la couleur du joueur 2
                                     tourIA = false;
 
-                                    // On change de joueur
+                                    // on repasse au joueur 1
                                     RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
                                     RunTxtBlockAuTourDe.Foreground = couleurJ1;
 
-                                    // Dans Grille.cs
+                                    // on prévient la grille du nouveau jeton
                                     Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
 
                                     nbCoups += 1;
@@ -613,10 +614,10 @@ namespace Puissance4.Interface
             }
         }
 
-        // L'IA intelligente joue son coup.
-        // C'est presque la meme chose que JouerIdiot, sauf que la colonne n'est
-        // pas tiree au hasard : on demande a la classe IA de choisir le meilleur
-        // coup grace a l'algorithme Minimax (alpha-beta) de la SAE 2.2.
+        // l'IA intelligente joue son coup.
+        // c'est presque pareil que JouerIdiot, sauf que la colonne n'est pas
+        // tirée au hasard : on demande à la classe IA de choisir le meilleur
+        // coup avec l'algorithme Minimax (alpha-beta) de la SAE 2.2.
         private void JouerIntelligent()
         {
             IA ia = new IA(NiveauVirtuel.Intelligent, Partie.Configuration.NbJetonAAligner);
@@ -646,7 +647,7 @@ namespace Puissance4.Interface
                         {
                             if (enfant is Border b && b.Child is Shape jeton)
                             {
-                                jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2 (l'IA)
+                                jeton.Fill = couleurJ2; // le jeton prend la couleur du joueur 2 (l'IA)
                                 RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
                                 RunTxtBlockAuTourDe.Foreground = couleurJ1;
                                 Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
@@ -666,10 +667,10 @@ namespace Puissance4.Interface
             try
             {
                 string lettre = ColonneToLettre(colonne);
-                // créer visuel : [NomJoueur] en [Lettre], avec nom coloré
+                // on crée la ligne d'historique : [Nom] en [Lettre], avec le nom coloré
                 StackPanel panel = new StackPanel { Orientation = Orientation.Horizontal };
                 TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontSize = this.FontSize };
-                // déterminer couleur du joueur
+                // on choisit la couleur du joueur
                 if (nomJoueur == Partie.Joueur1.Nom)
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
                 else
@@ -693,7 +694,7 @@ namespace Puissance4.Interface
                 panel.Children.Add(txtEn);
                 panel.Children.Add(txtCol);
 
-                // Insérer un ListBoxItem pour assurer le rendu du StackPanel dans le ListBox personnalisé
+                // on met le tout dans un ListBoxItem pour bien l'afficher dans la liste
                 ListBoxItem item = new ListBoxItem { Content = panel, Padding = new Thickness(4), Background = Brushes.Transparent, BorderThickness = new Thickness(0) };
                 ListBoxHistorique.Items.Insert(0, item);
             }
@@ -742,7 +743,7 @@ namespace Puissance4.Interface
                 else
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
 
-                TextBlock txtMsg = new TextBlock {Text = "a rejoint", FontSize = this.FontSize };
+                TextBlock txtMsg = new TextBlock { Text = "a rejoint", FontSize = this.FontSize };
                 if (ContrasteMarque)
                     txtMsg.Foreground = Brushes.Black;
                 else
@@ -905,14 +906,14 @@ namespace Puissance4.Interface
 
                     Grid.SetRow(caseGrille, i + 1);
                     Grid.SetColumn(caseGrille, j);
-                    // Permettre de jouer au clic sur la case (détecte la colonne via Grid.GetColumn)
+                    // on permet aussi de jouer en cliquant sur la case (on retrouve la colonne avec Grid.GetColumn)
                     caseGrille.MouseLeftButtonDown += CaseGrille_MouseLeftButtonDown;
                     GridTableJeu.Children.Add(caseGrille);
                 }
             }
         }
 
-        // Handler pour jouer en cliquant sur une case (déduit la colonne et joue comme pour les touches)
+        // ce qui se passe quand on clique sur une case (on trouve la colonne et on joue comme avec les touches)
         private async void CaseGrille_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
         {
             if (alignement) return;
@@ -921,10 +922,10 @@ namespace Puissance4.Interface
             int colonne = Grid.GetColumn(element);
             if (colonne < 0 || colonne >= Partie.Grille.Colonnes) return;
 
-            // On cherche la ligne la plus basse (en partant de la fin)
+            // on cherche la ligne libre la plus basse en partant du bas
             for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
             {
-                // On vérifie s'il y a déjà un visuel à cet emplacement
+                // on regarde si la case a déjà quelque chose dessus
                 bool caseOccupee = false;
                 foreach (UIElement enfant in GridTableJeu.Children)
                 {
@@ -938,10 +939,10 @@ namespace Puissance4.Interface
                     }
                 }
 
-                // Dès qu'on trouve la ligne la plus basse de libre
+                // dès qu'on trouve la première case libre en bas
                 if (!caseOccupee)
                 {
-                    // On récupère la Border de cette case pour colorier son jeton
+                    // on récupère la case pour colorier son jeton
                     foreach (UIElement enfant in GridTableJeu.Children)
                     {
                         if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
@@ -950,11 +951,11 @@ namespace Puissance4.Interface
                             {
                                 if (Partie.JoueurCourant == Partie.Joueur1)
                                 {
-                                    jeton.Fill = couleurJ1; // Le jeton devient de la couleur du joueur 1
+                                    jeton.Fill = couleurJ1; // le jeton prend la couleur du joueur 1
                                     RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
                                     RunTxtBlockAuTourDe.Foreground = couleurJ2;
 
-                                    // Dans Grille.cs
+                                    // on prévient la grille du nouveau jeton
                                     Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur1);
                                     AjouterHistorique(Partie.Joueur1.Nom, colonne);
 
@@ -962,19 +963,19 @@ namespace Puissance4.Interface
                                     {
                                         if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Humain)
                                         {
-                                            // On change de joueur
+                                            // on passe au joueur 2
                                             Partie.JoueurCourant = Partie.Joueur2;
-                                            StartTimerIfNeeded();
+                                            DemarrerTimerSiBesoin();
                                         }
                                         else if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Intelligent)
                                         {
-                                            // On bloque les touches pendant que l'IA "reflechit"
+                                            // on bloque les touches pendant que l'IA "réfléchit"
                                             alignement = true;
-                                            // arrêter le timer du joueur précédent pour éviter que l'IA hérite du temps restant
-                                            StopTimer();
+                                            // on stoppe le timer pour que l'IA ne récupère pas le temps restant
+                                            ArreterTimer();
                                             await Task.Delay(2000);
-                                            // relancer le timer (réinitialisé) pour l'IA si nécessaire
-                                            StartTimerIfNeeded();
+                                            // on relance un timer tout neuf pour l'IA si besoin
+                                            DemarrerTimerSiBesoin();
                                             alignement = false;
 
                                             JouerIntelligent();
@@ -982,11 +983,11 @@ namespace Puissance4.Interface
                                         else
                                         {
                                             alignement = true;
-                                            // arrêter le timer du joueur précédent pour éviter que l'IA hérite du temps restant
-                                            StopTimer();
+                                            // on stoppe le timer pour que l'IA ne récupère pas le temps restant
+                                            ArreterTimer();
                                             await Task.Delay(2000);
-                                            // relancer le timer (réinitialisé) pour l'IA si nécessaire
-                                            StartTimerIfNeeded();
+                                            // on relance un timer tout neuf pour l'IA si besoin
+                                            DemarrerTimerSiBesoin();
                                             alignement = false;
 
                                             JouerIdiot();
@@ -997,16 +998,16 @@ namespace Puissance4.Interface
                                 }
                                 else
                                 {
-                                    jeton.Fill = couleurJ2; // Le jeton devient de la couleur du joueur 2
+                                    jeton.Fill = couleurJ2; // le jeton prend la couleur du joueur 2
 
-                                    // On change de joueur
+                                    // on repasse au joueur 1
                                     Partie.JoueurCourant = Partie.Joueur1;
                                     RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
                                     RunTxtBlockAuTourDe.Foreground = couleurJ1;
 
-                                    StartTimerIfNeeded();
+                                    DemarrerTimerSiBesoin();
 
-                                    // Dans Grille.cs
+                                    // on prévient la grille du nouveau jeton
                                     Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
                                     AjouterHistorique(Partie.Joueur2.Nom, colonne);
                                 }
@@ -1030,7 +1031,7 @@ namespace Puissance4.Interface
                                     alignement = true;
                                     PartieFini(joueur);
                                 }
-                                StartTimerIfNeeded();
+                                DemarrerTimerSiBesoin();
                             }
                             break;
                         }
@@ -1043,7 +1044,7 @@ namespace Puissance4.Interface
             {
                 premierCoup = Partie.Joueur1.Nom + ColonneToLettre(colonne);
             }
-            StartTimerIfNeeded();
+            DemarrerTimerSiBesoin();
         }
 
         private void PartieFini(Joueur Gagnant)
@@ -1058,8 +1059,8 @@ namespace Puissance4.Interface
             }
             else
             {
-                // fin de la partie en mode challenge : arrêter le timer pour éviter des actions supplémentaires
-                StopTimer();
+                // fin de partie en mode challenge : on arrête le timer pour éviter d'autres actions
+                ArreterTimer();
                 Partie.FinirPartie(premierCoup!, coupDecisif!, DureePartie, nbCoups, Gagnant);
                 AjouterHistoriqueGagne(Gagnant);
                 if (Gagnant == Partie.Joueur1)

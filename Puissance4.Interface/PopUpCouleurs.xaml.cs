@@ -40,6 +40,7 @@ namespace Puissance4.Interface
         {
             Border borderClique = (Border)sender;
 
+            // si la couleur n'est pas encore choisie on la sélectionne, sinon on l'enlève
             if (borderClique.BorderBrush == Brushes.Transparent)
             {
                 DéselectionnerAutresCouleurs();
@@ -52,6 +53,7 @@ namespace Puissance4.Interface
                 SelectionCouleurs = "";
             }
 
+            // quand une couleur et une forme sont choisies on ferme la pop-up
             if (SelectionCouleurs != "" && SelectionFormes != "")
             {
                 this.Close();
@@ -62,6 +64,7 @@ namespace Puissance4.Interface
         {
             Border borderClique = (Border)sender;
 
+            // si la forme n'est pas encore choisie on la sélectionne, sinon on l'enlève
             if (borderClique.BorderBrush == Brushes.Transparent)
             {
                 DéselectionnerAutresFormes();
@@ -74,6 +77,7 @@ namespace Puissance4.Interface
                 SelectionFormes = "";
             }
 
+            // quand une couleur et une forme sont choisies on ferme la pop-up
             if (SelectionCouleurs != "" && SelectionFormes != "")
             {
                 this.Close();
@@ -82,6 +86,7 @@ namespace Puissance4.Interface
 
         private void DéselectionnerAutresCouleurs()
         {
+            // on enlève la bordure blanche de toutes les autres couleurs
             for (int i = 1; i <= 6; i++)
             {
                 Border border = (Border)FindName("BorderCouleur" + i.ToString());
@@ -91,6 +96,7 @@ namespace Puissance4.Interface
 
         private void DéselectionnerAutresFormes()
         {
+            // on enlève la bordure blanche de toutes les autres formes
             for (int i = 1; i <= 6; i++)
             {
                 Border border = (Border)FindName("BorderForme" + i.ToString());

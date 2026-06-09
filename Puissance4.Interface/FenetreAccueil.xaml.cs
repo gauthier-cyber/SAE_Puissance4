@@ -13,12 +13,12 @@ using Puissance4.Systeme;
 namespace Puissance4.Interface
 {
     /// <summary>
-    /// Interaction logic for FenetreAccueil.xaml
+    /// fenêtre d'accueil
     /// </summary>
     public partial class FenetreAccueil : Window
     {
-        public Joueur ?Joueur1 { get; set; }
-        public Joueur ?Joueur2 { get; set; }
+        public Joueur? Joueur1 { get; set; }
+        public Joueur? Joueur2 { get; set; }
         private bool ContrasteMarque;
 
         public FenetreAccueil()
@@ -27,14 +27,14 @@ namespace Puissance4.Interface
             DésactiverBtnIA();
         }
 
-n        public FenetreAccueil(bool contrasteMarque)
+        public FenetreAccueil(bool contrasteMarque)
         {
             InitializeComponent();
             DésactiverBtnIA();
             Main(contrasteMarque);
         }
 
-n        public void Main(bool contrasteMarque)
+        public void Main(bool contrasteMarque)
         {
             ContrasteMarque = contrasteMarque;
 
@@ -43,50 +43,50 @@ n        public void Main(bool contrasteMarque)
                 this.Background = Brushes.White;
                 this.FontFamily = new FontFamily("Verdana");
                 this.Foreground = Brushes.Black;
-                BtnNewGame.Foreground = Brushes.Black;
-                BtnContinueGame.Foreground = Brushes.Black;
-                BorderNewGame.Background = Brushes.White;
+                BtnNouvellePartie.Foreground = Brushes.Black;
+                BtnReprendrePartie.Foreground = Brushes.Black;
+                BorderNouvellePartie.Background = Brushes.White;
             }
         }
 
-        private void BtnNewGame_Click(object sender, RoutedEventArgs e)
+        private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
-            // Si le bouton a déjà été cliqué, retirer les bordures blanches, faire apparaître le bouton BtnContinueGame et cacher le border BorderNewGame
-            // Sinon, faire apparaître des bordures blanches au boutton cliqué, faire apparaître le border BorderNewGame et cacher le bouton BtnContinueGame
-            string tag = (string)BtnNewGame.Tag;
+            // si le bouton est déjà cliqué : on enlève la bordure blanche, on remontre BtnReprendrePartie et on cache BorderNouvellePartie
+            // sinon : on met une bordure blanche, on montre BorderNouvellePartie et on cache BtnReprendrePartie
+            string tag = (string)BtnNouvellePartie.Tag;
             if (tag == "EstCliqué")
             {
-                BtnNewGame.BorderThickness = new Thickness(0);
-                BtnContinueGame.Visibility = Visibility.Visible;
-                BorderNewGame.Visibility = Visibility.Hidden;
-                BtnNewGame.Tag = "";
+                BtnNouvellePartie.BorderThickness = new Thickness(0);
+                BtnReprendrePartie.Visibility = Visibility.Visible;
+                BorderNouvellePartie.Visibility = Visibility.Hidden;
+                BtnNouvellePartie.Tag = "";
             }
             else
             {
-                BtnNewGame.BorderThickness = new Thickness(5);
-                BorderNewGame.Visibility = Visibility.Visible;
-                BtnContinueGame.Visibility = Visibility.Hidden;
-                BtnNewGame.Tag = "EstCliqué";
+                BtnNouvellePartie.BorderThickness = new Thickness(5);
+                BorderNouvellePartie.Visibility = Visibility.Visible;
+                BtnReprendrePartie.Visibility = Visibility.Hidden;
+                BtnNouvellePartie.Tag = "EstCliqué";
             }
         }
 
-        private void BtnContinueGame_Click(object sender, RoutedEventArgs e)
+        private void BtnReprendrePartie_Click(object sender, RoutedEventArgs e)
         {
-            // Ouvrir la PopUpSauvegarde
-            PopUpSauvegarde popUp = new PopUpSauvegarde(ContrasteMarque, TailleTexte);
+            // on ouvre la pop-up des sauvegardes
+            PopUpSauvegarde popUp = new PopUpSauvegarde(ContrasteMarque);
             popUp.ShowDialog();
         }
 
-        private void BtnContinueGame_GotFocus(object sender, RoutedEventArgs e)
+        private void BtnReprendrePartie_GotFocus(object sender, RoutedEventArgs e)
         {
-            // Faire apparaître des bordures blanches au boutton cliqué
-            BtnContinueGame.BorderThickness = new Thickness(5);
+            // on met une bordure blanche quand le bouton est sélectionné
+            BtnReprendrePartie.BorderThickness = new Thickness(5);
         }
 
-        private void BtnContinueGame_LostFocus(object sender, RoutedEventArgs e)
+        private void BtnReprendrePartie_LostFocus(object sender, RoutedEventArgs e)
         {
-            // Faire disparaître les bordures blanches au boutton décliqué
-            BtnContinueGame.BorderThickness = new Thickness(0);
+            // on enlève la bordure blanche quand on quitte le bouton
+            BtnReprendrePartie.BorderThickness = new Thickness(0);
         }
 
         private void BtnJouerA2_Click(object sender, RoutedEventArgs e)
@@ -94,15 +94,15 @@ n        public void Main(bool contrasteMarque)
             Joueur1 = new Joueur("Joueur 1");
             Joueur2 = new Joueur("Joueur 2");
 
-            // Ouvrir la fenêtre de réglages et fermer la fenêtre d'accueil
-            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2, ContrasteMarque, TailleTexte);
+            // on ouvre la fenêtre des réglages et on ferme l'accueil
+            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2);
             fenetreReglage.Show();
             this.Close();
         }
 
         private void BtnJouerSeul_Click(object sender, RoutedEventArgs e)
         {
-            // Faire apparaître des bordures blanches et activer les boutons BtnIAIdiot et BtnIAIntelligent
+            // on met une bordure blanche et on active les boutons des deux IA
             BtnJouerSeul.BorderThickness = new Thickness(5);
             ActiverBtnIA();
         }
@@ -126,15 +126,15 @@ n        public void Main(bool contrasteMarque)
             Joueur1 = new Joueur("Joueur 1");
             Joueur2 = new Joueur(joueur, niveau);
 
-            // Ouvrir la fenêtre de réglages et fermer la fenêtre d'accueil
-            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2, ContrasteMarque, TailleTexte);
+            // on ouvre la fenêtre des réglages et on ferme l'accueil
+            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2);
             fenetreReglage.Show();
             this.Close();
         }
 
         private void DésactiverBtnIA()
         {
-            // Désactiver les boutons BtnIAIdiot et BtnIAIntelligent
+            // on désactive les deux boutons IA
             BtnIAIdiot.IsEnabled = false;
             BtnIAIntelligent.IsEnabled = false;
 
@@ -148,7 +148,7 @@ n        public void Main(bool contrasteMarque)
 
         private void ActiverBtnIA()
         {
-            // Activer les boutons BtnIAIdiot et BtnIAIntelligent
+            // on active les deux boutons IA
             BtnIAIdiot.IsEnabled = true;
             BtnIAIntelligent.IsEnabled = true;
 
