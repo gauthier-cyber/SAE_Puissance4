@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Puissance4.Interface"
         mc:Ignorable="d"
+        Background="#FF0A111F"
+        FontFamily="{StaticResource PlaypenSans}"
+        Foreground="White"
         Title="Puissance 4" Height="350" Width="400">
-    <StackPanel Background="#FF0A111F">
-        <TextBlock Text="Statistique de la partie" FontFamily="{StaticResource PlaypenSans}" Foreground="White" FontSize="24"
+    <StackPanel>
+        <TextBlock Text="Statistique de la partie" FontSize="24"
                    HorizontalAlignment="Center" Margin="10"/>
         <Border Width="300" Height="200" BorderThickness="4" BorderBrush="White" CornerRadius="15">
             <Grid>
@@ -24,26 +27,26 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="Gagnant :" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
                 <TextBlock Text="Premier coup :" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
                 <TextBlock Text="Coup décisif :" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
                 <TextBlock Text="Durée :" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
                 <TextBlock Text="Coups :" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
 
                 <TextBlock x:Name="TxtGagnant" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
                 <TextBlock x:Name="TxtPremierCoup" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
                 <TextBlock x:Name="TxtCoupDecisif" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
                 <TextBlock x:Name="TxtDuree" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
                 <TextBlock x:Name="TxtCoups" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"
-                           FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="White"/>
+                           FontSize="18"/>
             </Grid>
         </Border>
     </StackPanel>
