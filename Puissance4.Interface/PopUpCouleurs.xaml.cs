@@ -22,13 +22,9 @@ namespace Puissance4.Interface
             InitializeComponent();
         }
 
-        public PopUpCouleurs(bool contrasteMarque, int tailleTexte)
+        public PopUpCouleurs(bool contrasteMarque)
         {
             InitializeComponent();
-            double baseFontSize = SystemFonts.MessageFontSize;
-            double multiplier = (tailleTexte >= 6) ? 1.6 : (tailleTexte <= -6) ? 0.8 : 1.0;
-            double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
-            this.FontSize = newFontSize;
             if (contrasteMarque)
             {
                 this.Background = Brushes.White;

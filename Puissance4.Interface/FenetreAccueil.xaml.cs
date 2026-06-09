@@ -20,7 +20,6 @@ namespace Puissance4.Interface
         public Joueur ?Joueur1 { get; set; }
         public Joueur ?Joueur2 { get; set; }
         private bool ContrasteMarque;
-        private int TailleTexte;
 
         public FenetreAccueil()
         {
@@ -28,21 +27,16 @@ namespace Puissance4.Interface
             DésactiverBtnIA();
         }
 
-        public FenetreAccueil(bool contrasteMarque, int tailleTexte)
+n        public FenetreAccueil(bool contrasteMarque)
         {
             InitializeComponent();
             DésactiverBtnIA();
-            Main(contrasteMarque, tailleTexte);
+            Main(contrasteMarque);
         }
 
-        public void Main(bool contrasteMarque, int tailleTexte)
+n        public void Main(bool contrasteMarque)
         {
             ContrasteMarque = contrasteMarque;
-            TailleTexte = tailleTexte;
-
-            double baseFontSize = SystemFonts.MessageFontSize;
-            double newFontSize = Math.Max(8, baseFontSize + TailleTexte);
-            this.FontSize = newFontSize;
 
             if (contrasteMarque)
             {

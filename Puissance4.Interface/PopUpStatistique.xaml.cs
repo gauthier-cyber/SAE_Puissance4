@@ -37,7 +37,7 @@ namespace Puissance4.Interface
             TxtCoupDecisif.Foreground = (Brush)new BrushConverter().ConvertFromString((Partie.CoupDecisif.Contains(Partie.Joueur1.Nom)) ? Partie.Configuration.CouleurJoueur1 : Partie.Configuration.CouleurJoueur2)!;
         }
 
-        public PopUpStatistique(Partie partie, bool contrasteMarque, int tailleTexte)
+        public PopUpStatistique(Partie partie, bool contrasteMarque)
         {
             InitializeComponent();
             Partie = partie;
@@ -53,11 +53,6 @@ namespace Puissance4.Interface
             TxtGagnant.Foreground = (Brush)new BrushConverter().ConvertFromString((Partie.Gagnant == Partie.Joueur1) ? Partie.Configuration.CouleurJoueur1 : Partie.Configuration.CouleurJoueur2)!;
             TxtPremierCoup.Foreground = (Brush)new BrushConverter().ConvertFromString((Partie.PremierCoup.Contains(Partie.Joueur1.Nom)) ? Partie.Configuration.CouleurJoueur1 : Partie.Configuration.CouleurJoueur2)!;
             TxtCoupDecisif.Foreground = (Brush)new BrushConverter().ConvertFromString((Partie.CoupDecisif.Contains(Partie.Joueur1.Nom)) ? Partie.Configuration.CouleurJoueur1 : Partie.Configuration.CouleurJoueur2)!;
-
-            double baseFontSize = SystemFonts.MessageFontSize;
-            double multiplier = (tailleTexte >= 6) ? 1.6 : (tailleTexte <= -6) ? 0.8 : 1.0;
-            double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
-            this.FontSize = newFontSize;
 
             if (contrasteMarque)
             {
