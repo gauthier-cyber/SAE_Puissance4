@@ -41,7 +41,10 @@ namespace Puissance4.Interface
         private DispatcherTimer? timerTempsReflexion;
         private int tempsRestant = 0;
 
-        public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
+        private bool ContrasteMarque;
+        private int TailleTexte;
+
+        public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge, bool contrasteMarque, int tailleTexte)
         {
             InitializeComponent();
             Joueur1 = J1;
@@ -52,10 +55,11 @@ namespace Puissance4.Interface
             {
                 Challenge = new Challenge(0, 0);
             }
-            Main();
+            ContrasteMarque = contrasteMarque;
+            TailleTexte = tailleTexte;
+            Main(ContrasteMarque, TailleTexte);
         }
 
-// Destructeur : tentative de nettoyage si l'objet est collecté
         // Destructeur : tentative de nettoyage si l'objet est collecté
         ~FenetreJeu()
         {
@@ -86,7 +90,7 @@ namespace Puissance4.Interface
             base.OnClosing(e);
         }
 
-        public FenetreJeu(Joueur J1, Joueur J2, Configuration config, Challenge challenge)
+        public FenetreJeu(Joueur J1, Joueur J2, Configuration config, Challenge challenge, bool contrasteMarque, int tailleTexte)
         {
             InitializeComponent();
             Joueur1 = J1;
@@ -95,10 +99,10 @@ namespace Puissance4.Interface
             Partie = new Partie(Joueur1, Joueur2, Config);
             Challenge = challenge;
 
-            Main();
+            Main(contrasteMarque, tailleTexte);
         }
 
-        public void Main()
+        public void Main(bool contrasteMarque, int tailleTexte)
         {
             DessinerGrille();
 
@@ -127,6 +131,21 @@ namespace Puissance4.Interface
             {
                 TxtBlockScoreJoueur1.Text = Challenge.ScoreJoueur1.ToString();
                 TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur2.ToString();
+            }
+
+            // appliquer les préférences de contraste et de taille de texte
+            if (contrasteMarque)
+            {
+                // appliquer un fond blanc
+                this.Background = Brushes.White;
+                // appliquer Verdana a tout les textes
+                var verdana = new FontFamily("Verdana");
+                this.FontFamily = verdana;
+                // appliquer une couleur noire a tout les textes
+                this.Foreground = Brushes.Black;
+                BtnFinirChallenge.Foreground = Brushes.Black;
+                BtnRelancerPartie.Foreground = Brushes.Black;
+                BtnQuitter.Foreground = Brushes.Black;
             }
         }
 
@@ -261,21 +280,21 @@ namespace Puissance4.Interface
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
         {
-            FenetreAccueil fenetreAccueil = new FenetreAccueil();
+            FenetreAccueil fenetreAccueil = new FenetreAccueil(ContrasteMarque, TailleTexte);
             fenetreAccueil.Show();
             this.Close();
         }
 
         private void BtnRelancerPartie_Click(object sender, RoutedEventArgs e)
         {
-            FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config, Challenge!);
+            FenetreJeu fenetreJeu = new FenetreJeu(Joueur1, Joueur2, Config, Challenge!, ContrasteMarque, TailleTexte);
             fenetreJeu.Show();
             this.Close();
         }
 
         private void BtnFinirChallenge_Click(object sender, RoutedEventArgs e)
         {
-            FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie, Challenge!);
+            FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie, Challenge!, ContrasteMarque, TailleTexte);
             fenetreVictoire.Show();
             this.Close();
         }
@@ -570,15 +589,26 @@ namespace Puissance4.Interface
                 string lettre = ColonneToLettre(colonne);
                 // créer visuel : [NomJoueur] en [Lettre], avec nom coloré
                 StackPanel panel = new StackPanel { Orientation = Orientation.Horizontal };
-                TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontFamily = (System.Windows.Media.FontFamily)FindResource("PlaypenSans"), FontSize = 16 };
+                TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontSize = 16 };
                 // déterminer couleur du joueur
                 if (nomJoueur == Partie.Joueur1.Nom)
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
                 else
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
 
-                TextBlock txtEn = new TextBlock { Text = "en ", Foreground = Brushes.White, FontFamily = (System.Windows.Media.FontFamily)FindResource("PlaypenSans"), FontSize = 16 };
-                TextBlock txtCol = new TextBlock { Text = lettre, Foreground = Brushes.White, FontFamily = (System.Windows.Media.FontFamily)FindResource("PlaypenSans"), FontSize = 16 };
+                TextBlock txtEn = new TextBlock { Text = "en ", FontSize = 16 };
+                TextBlock txtCol = new TextBlock { Text = lettre, FontSize = 16 };
+
+                if (ContrasteMarque)
+                {
+                    txtEn.Foreground = Brushes.Black;
+                    txtCol.Foreground = Brushes.Black;
+                }
+                else
+                {
+                    txtEn.Foreground = Brushes.White;
+                    txtCol.Foreground = Brushes.White;
+                }
 
                 panel.Children.Add(txtNom);
                 panel.Children.Add(txtEn);
@@ -601,13 +631,17 @@ namespace Puissance4.Interface
             try
             {
                 StackPanel panel = new StackPanel { Orientation = Orientation.Horizontal };
-                TextBlock txtNom = new TextBlock { Text = gagnant.Nom + " ", FontFamily = (System.Windows.Media.FontFamily)FindResource("PlaypenSans"), FontSize = 16 };
+                TextBlock txtNom = new TextBlock { Text = gagnant.Nom + " ", FontSize = 16 };
                 if (gagnant == Partie.Joueur1)
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
                 else
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
 
-                TextBlock txtMsg = new TextBlock { Text = "a gagné", Foreground = Brushes.White, FontFamily = (System.Windows.Media.FontFamily)FindResource("PlaypenSans"), FontSize = 16 };
+                TextBlock txtMsg = new TextBlock { Text = "a gagné", FontSize = 16 };
+                if (ContrasteMarque)
+                    txtMsg.Foreground = Brushes.Black;
+                else
+                    txtMsg.Foreground = Brushes.White;
                 panel.Children.Add(txtNom);
                 panel.Children.Add(txtMsg);
                 ListBoxHistorique.Items.Insert(0, panel);
@@ -620,13 +654,17 @@ namespace Puissance4.Interface
             try
             {
                 StackPanel panel = new StackPanel { Orientation = Orientation.Horizontal };
-                TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontFamily = (System.Windows.Media.FontFamily)FindResource("PlaypenSans"), FontSize = 16 };
+                TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontSize = 16 };
                 if (nomJoueur == Partie.Joueur1.Nom)
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
                 else
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
 
-                TextBlock txtMsg = new TextBlock { Text = "a rejoint", Foreground = Brushes.White, FontFamily = (System.Windows.Media.FontFamily)FindResource("PlaypenSans"), FontSize = 16 };
+                TextBlock txtMsg = new TextBlock {Text = "a rejoint", FontSize = 16 };
+                if (ContrasteMarque)
+                    txtMsg.Foreground = Brushes.Black;
+                else
+                    txtMsg.Foreground = Brushes.White;
                 panel.Children.Add(txtNom);
                 panel.Children.Add(txtMsg);
                 ListBoxHistorique.Items.Insert(0, panel);
@@ -931,7 +969,7 @@ namespace Puissance4.Interface
             {
                 Partie.FinirPartie(premierCoup!, coupDecisif!, DureePartie, nbCoups, Gagnant);
                 AjouterHistoriqueGagne(Gagnant);
-                FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie);
+                FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie, ContrasteMarque, TailleTexte);
                 fenetreVictoire.Show();
                 this.Close();
             }

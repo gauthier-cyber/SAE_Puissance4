@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="Puissance 4" Height="550" Width="800"
         Background="#FF0A111F"
-        FontFamily="{StaticResource PlaypenSans}">
+        FontFamily="{StaticResource PlaypenSans}"
+        Foreground="White">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -31,25 +32,22 @@
 
                 <TextBlock x:Name="TxtBlockJoueur1" Grid.Row="0" Grid.Column="1" Text="[Joueur 1]"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontFamily="{StaticResource PlaypenSans}" Foreground="#cafc00"/>
+                   Foreground="#cafc00"/>
                 <TextBlock x:Name="TxtBlockJoueur2" Grid.Row="0" Grid.Column="2" Text="[Joueur 2]"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontFamily="{StaticResource PlaypenSans}" Foreground="#bd0000"/>
+                   Foreground="#bd0000"/>
 
                 <TextBlock Text="Score" Grid.Row="1" Grid.Column="0"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock x:Name="TxtBlockScoreJoueur1" Grid.Row="1" Grid.Column="1" Text="0"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock x:Name="TxtBlockScoreJoueur2" Grid.Row="1" Grid.Column="2" Text="0"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontFamily="{StaticResource PlaypenSans}" Foreground="#ffffff"/>
+                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Border>
 
         <Button x:Name="BtnAccueil" Grid.Column="0" Content="Retourner à l'accueil" Height="40" Width="160" Background="#cbc7b7"
-        FontFamily="{StaticResource PlaypenSans}" FontSize="16" Foreground="#0a111f"
+        FontSize="16" Foreground="#0a111f"
         HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" Click="BtnAccueil_Click">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
@@ -65,17 +63,17 @@
 
         <StackPanel Grid.Column="1" HorizontalAlignment="Center" Margin="0,20,0,0">
 
-            <TextBlock Text="Puissance 4 !" Foreground="White" FontSize="28"
+            <TextBlock Text="Puissance 4 !" FontSize="28"
                        HorizontalAlignment="Center" Margin="0,0,0,30"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,50">
-                <TextBlock Text="Victoire du " Foreground="White" FontSize="22"/>
+                <TextBlock Text="Victoire du " FontSize="22"/>
                 <TextBlock x:Name="TxtBlockNomJoueur" Text="[Joueur 1]" Foreground="#cafc00" FontSize="22"/>
-                <TextBlock Text=" !" Foreground="White" FontSize="22"/>
+                <TextBlock Text=" !" FontSize="22"/>
             </StackPanel>
 
             <Button x:Name="BtnStatistique" Content="Voir les statistique&#x0a;de la partie" Height="80" Width="200" Background="#cbc7b7"
-                    FontFamily="{StaticResource PlaypenSans}" FontSize="18" Foreground="#0a111f"
+                    FontSize="18" Foreground="#0a111f"
                     HorizontalAlignment="Center" Margin="10" Click="BtnStatistique_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">

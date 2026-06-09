@@ -22,6 +22,17 @@ namespace Puissance4.Interface
             InitializeComponent();
         }
 
+        public PopUpCouleurs(bool contrasteMarque, int tailleTexte)
+        {
+            InitializeComponent();
+            if (contrasteMarque)
+            {
+                this.Background = Brushes.White;
+                this.FontFamily = new FontFamily("Verdana");
+                this.Foreground = Brushes.Black;
+            }
+        }
+
         public string SelectionCouleurs { get; private set; } = "";
         public string SelectionFormes { get; private set; } = "";
 

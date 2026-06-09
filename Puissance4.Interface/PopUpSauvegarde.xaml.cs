@@ -22,6 +22,17 @@ namespace Puissance4.Interface
             InitializeComponent();
         }
 
+        public PopUpSauvegarde(bool contrasteMarque, int tailleTexte)
+        {
+            InitializeComponent();
+            if (contrasteMarque)
+            {
+                this.Background = Brushes.White;
+                this.FontFamily = new FontFamily("Verdana");
+                this.Foreground = Brushes.Black;
+            }
+        }
+
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             // Faire apparaître un message d'erreur "Il n'y a pas de sauvegarde disponible"
