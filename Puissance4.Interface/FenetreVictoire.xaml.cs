@@ -20,14 +20,15 @@ namespace Puissance4.Interface
     {
         public Partie Partie { get; set; }
         public Challenge? Challenge { get; set; }
+        private bool ContrasteMarque;
+        private int TailleTexte;
 
         public FenetreVictoire(Partie partie, Challenge challenge)
         {
             InitializeComponent();
             Partie = partie;
             Challenge = challenge;
-
-            Main();
+            Main(false, 0);
             EcrireTableauJeu();
         }
 
@@ -35,12 +36,28 @@ namespace Puissance4.Interface
         {
             InitializeComponent();
             Partie = partie;
-
-            Main();
+            Main(false, 0);
             EcrireTableauJeu();
         }
 
-        public void Main()
+        public FenetreVictoire(Partie partie, Challenge challenge, bool contrasteMarque, int tailleTexte)
+        {
+            InitializeComponent();
+            Partie = partie;
+            Challenge = challenge;
+            Main(contrasteMarque, tailleTexte);
+            EcrireTableauJeu();
+        }
+
+        public FenetreVictoire(Partie partie, bool contrasteMarque, int tailleTexte)
+        {
+            InitializeComponent();
+            Partie = partie;
+            Main(contrasteMarque, tailleTexte);
+            EcrireTableauJeu();
+        }
+
+        public void Main(bool contrasteMarque, int tailleTexte)
         {
             TxtBlockNomJoueur.Text = Partie.Gagnant!.Nom;
             if (Partie.Gagnant == Partie.Joueur1)
@@ -56,6 +73,19 @@ namespace Puissance4.Interface
             if (Challenge == null)
             {
                 BorderChallenge.Visibility = Visibility.Hidden;
+            }
+
+            ContrasteMarque = contrasteMarque;
+            TailleTexte = tailleTexte;
+
+            if (contrasteMarque)
+            {
+                this.Background = Brushes.White;
+                this.FontFamily = new FontFamily("Verdana");
+                this.Foreground = Brushes.Black;
+                // boutons
+                if (BtnAccueil != null) BtnAccueil.Foreground = Brushes.Black;
+                if (BtnStatistique != null) BtnStatistique.Foreground = Brushes.Black;
             }
         }
 
@@ -223,14 +253,14 @@ namespace Puissance4.Interface
 
         public void BtnAccueil_Click(object sender, RoutedEventArgs e)
         {
-            FenetreAccueil fenetreAccueil = new FenetreAccueil();
+            FenetreAccueil fenetreAccueil = new FenetreAccueil(ContrasteMarque, TailleTexte);
             fenetreAccueil.Show();
             this.Close();
         }
 
         public void BtnStatistique_Click(object sender, RoutedEventArgs e)
         {
-            PopUpStatistique popUpStatistique = new PopUpStatistique(Partie);
+            PopUpStatistique popUpStatistique = new PopUpStatistique(Partie, ContrasteMarque, TailleTexte);
             popUpStatistique.Show();
         }
     }

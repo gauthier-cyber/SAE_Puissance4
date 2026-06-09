@@ -19,11 +19,36 @@ namespace Puissance4.Interface
     {
         public Joueur ?Joueur1 { get; set; }
         public Joueur ?Joueur2 { get; set; }
+        private bool ContrasteMarque;
+        private int TailleTexte;
 
         public FenetreAccueil()
         {
             InitializeComponent();
             DésactiverBtnIA();
+        }
+
+        public FenetreAccueil(bool contrasteMarque, int tailleTexte)
+        {
+            InitializeComponent();
+            DésactiverBtnIA();
+            Main(contrasteMarque, tailleTexte);
+        }
+
+        public void Main(bool contrasteMarque, int tailleTexte)
+        {
+            ContrasteMarque = contrasteMarque;
+            TailleTexte = tailleTexte;
+
+            if (contrasteMarque)
+            {
+                this.Background = Brushes.White;
+                this.FontFamily = new FontFamily("Verdana");
+                this.Foreground = Brushes.Black;
+                BtnNewGame.Foreground = Brushes.Black;
+                BtnContinueGame.Foreground = Brushes.Black;
+                BorderNewGame.Background = Brushes.White;
+            }
         }
 
         private void BtnNewGame_Click(object sender, RoutedEventArgs e)
@@ -50,7 +75,7 @@ namespace Puissance4.Interface
         private void BtnContinueGame_Click(object sender, RoutedEventArgs e)
         {
             // Ouvrir la PopUpSauvegarde
-            PopUpSauvegarde popUp = new PopUpSauvegarde();
+            PopUpSauvegarde popUp = new PopUpSauvegarde(ContrasteMarque, TailleTexte);
             popUp.ShowDialog();
         }
 
@@ -72,7 +97,7 @@ namespace Puissance4.Interface
             Joueur2 = new Joueur("Joueur 2");
 
             // Ouvrir la fenêtre de réglages et fermer la fenêtre d'accueil
-            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2);
+            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2, ContrasteMarque, TailleTexte);
             fenetreReglage.Show();
             this.Close();
         }
@@ -104,7 +129,7 @@ namespace Puissance4.Interface
             Joueur2 = new Joueur(joueur, niveau);
 
             // Ouvrir la fenêtre de réglages et fermer la fenêtre d'accueil
-            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2);
+            FenetreReglage fenetreReglage = new FenetreReglage(Joueur1, Joueur2, ContrasteMarque, TailleTexte);
             fenetreReglage.Show();
             this.Close();
         }
