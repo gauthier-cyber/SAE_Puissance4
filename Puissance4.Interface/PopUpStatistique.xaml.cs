@@ -54,6 +54,11 @@ namespace Puissance4.Interface
             TxtPremierCoup.Foreground = (Brush)new BrushConverter().ConvertFromString((Partie.PremierCoup.Contains(Partie.Joueur1.Nom)) ? Partie.Configuration.CouleurJoueur1 : Partie.Configuration.CouleurJoueur2)!;
             TxtCoupDecisif.Foreground = (Brush)new BrushConverter().ConvertFromString((Partie.CoupDecisif.Contains(Partie.Joueur1.Nom)) ? Partie.Configuration.CouleurJoueur1 : Partie.Configuration.CouleurJoueur2)!;
 
+            double baseFontSize = SystemFonts.MessageFontSize;
+            double multiplier = (tailleTexte >= 6) ? 1.6 : (tailleTexte <= -6) ? 0.8 : 1.0;
+            double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
+            this.FontSize = newFontSize;
+
             if (contrasteMarque)
             {
                 this.Background = Brushes.White;
