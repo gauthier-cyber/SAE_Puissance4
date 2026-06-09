@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Puissance4.Systeme;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Puissance4.Interface
 {
@@ -35,6 +36,9 @@ namespace Puissance4.Interface
         public int nbCoups = 0;
 
         private bool alignement = false;
+
+        private DispatcherTimer? timerTempsReflexion;
+        private int tempsRestant = 0;
 
         public FenetreJeu(Joueur J1, Joueur J2, Configuration config, bool modeChallenge)
         {
@@ -86,10 +90,141 @@ namespace Puissance4.Interface
 
             this.KeyDown += Window_KeyDown;
 
+            StartTimerIfNeeded();
+
             if (Challenge != null)
             {
                 TxtBlockScoreJoueur1.Text = Challenge.ScoreJoueur1.ToString();
                 TxtBlockScoreJoueur2.Text = Challenge.ScoreJoueur2.ToString();
+            }
+        }
+
+        private void StartTimerIfNeeded()
+        {
+            if (timerTempsReflexion != null)
+            {
+                timerTempsReflexion.Stop();
+            }
+
+            if (Partie.Configuration.TempsReflexion > 0)
+            {
+                tempsRestant = Partie.Configuration.TempsReflexion;
+                TxtBlockTempsRestant.Visibility = Visibility.Visible;
+                TxtBlockTempsRestant.Text = $"Temps restant : {tempsRestant}s";
+
+                if (timerTempsReflexion == null)
+                {
+                    timerTempsReflexion = new DispatcherTimer();
+                    timerTempsReflexion.Interval = TimeSpan.FromSeconds(1);
+                    timerTempsReflexion.Tick += TimerTempsReflexion_Tick;
+                }
+
+                timerTempsReflexion.Start();
+            }
+            else
+            {
+                TxtBlockTempsRestant.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void StopTimer()
+        {
+            if (timerTempsReflexion != null)
+                timerTempsReflexion.Stop();
+            TxtBlockTempsRestant.Visibility = Visibility.Collapsed;
+        }
+
+        private void TimerTempsReflexion_Tick(object? sender, EventArgs e)
+        {
+            tempsRestant -= 1;
+            if (tempsRestant < 0) tempsRestant = 0;
+            TxtBlockTempsRestant.Text = $"Temps restant : {tempsRestant}s";
+
+            if (tempsRestant == 0)
+            {
+                StopTimer();
+                AutoPlayOnTimeout();
+            }
+        }
+
+        private void AutoPlayOnTimeout()
+        {
+            if (Partie.JoueurCourant.NiveauVirtuel == NiveauVirtuel.Intelligent)
+            {
+                JouerIntelligent();
+                return;
+            }
+
+            Random rand = new Random();
+            for (int attempt = 0; attempt < Partie.Grille.Colonnes; attempt++)
+            {
+                int colonne = rand.Next(Partie.Grille.Colonnes);
+                for (int ligne = Partie.Grille.Lignes - 1; ligne >= 0; ligne--)
+                {
+                    bool caseOccupee = false;
+                    foreach (UIElement enfant in GridTableJeu.Children)
+                    {
+                        if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                        {
+                            if (enfant is Border b && b.Child != null && ((Shape)b.Child).Fill != Brushes.Transparent)
+                            {
+                                caseOccupee = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!caseOccupee)
+                    {
+                        foreach (UIElement enfant in GridTableJeu.Children)
+                        {
+                            if (Grid.GetRow(enfant) == (ligne + 1) && Grid.GetColumn(enfant) == colonne)
+                            {
+                                if (enfant is Border b && b.Child is Shape jeton)
+                                {
+                                    if (Partie.JoueurCourant == Partie.Joueur1)
+                                    {
+                                        jeton.Fill = couleurJ1;
+                                        Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur1);
+                                        Partie.JoueurCourant = Partie.Joueur2;
+                                        RunTxtBlockAuTourDe.Text = Partie.Joueur2.Nom;
+                                        RunTxtBlockAuTourDe.Foreground = couleurJ2;
+                                    }
+                                    else
+                                    {
+                                        jeton.Fill = couleurJ2;
+                                        Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
+                                        Partie.JoueurCourant = Partie.Joueur1;
+                                        RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
+                                        RunTxtBlockAuTourDe.Foreground = couleurJ1;
+                                    }
+
+                                    nbCoups += 1;
+
+                                    if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
+                                    {
+                                        Joueur joueur;
+                                        if (Partie.JoueurCourant == Partie.Joueur1)
+                                            joueur = Partie.Joueur2;
+                                        else
+                                            joueur = Partie.Joueur1;
+
+                                        DateTime Fin = DateTime.Now;
+                                        TimeSpan intervalle = Fin - DebutPartie;
+                                        DureePartie = intervalle.TotalSeconds;
+
+                                        alignement = true;
+                                        PartieFini(joueur);
+                                    }
+
+                                    StartTimerIfNeeded();
+                                }
+                                break;
+                            }
+                        }
+                        return;
+                    }
+                }
             }
         }
 
@@ -182,12 +317,17 @@ namespace Puissance4.Interface
                                             {
                                                 // On change de joueur
                                                 Partie.JoueurCourant = Partie.Joueur2;
+                                                StartTimerIfNeeded();
                                             }
                                             else if (Partie.Joueur2.NiveauVirtuel == NiveauVirtuel.Intelligent)
                                             {
                                                 // On bloque les touches pendant que l'IA "reflechit"
                                                 alignement = true;
+                                                // arrêter le timer du joueur précédent pour éviter que l'IA hérite du temps restant
+                                                StopTimer();
                                                 await Task.Delay(2000);
+                                                // relancer le timer (réinitialisé) pour l'IA si nécessaire
+                                                StartTimerIfNeeded();
                                                 alignement = false;
 
                                                 JouerIntelligent();
@@ -195,7 +335,11 @@ namespace Puissance4.Interface
                                             else
                                             {
                                                 alignement = true;
+                                                // arrêter le timer du joueur précédent pour éviter que l'IA hérite du temps restant
+                                                StopTimer();
                                                 await Task.Delay(2000);
+                                                // relancer le timer (réinitialisé) pour l'IA si nécessaire
+                                                StartTimerIfNeeded();
                                                 alignement = false;
 
                                                 JouerIdiot();
@@ -212,6 +356,8 @@ namespace Puissance4.Interface
                                         Partie.JoueurCourant = Partie.Joueur1;
                                         RunTxtBlockAuTourDe.Text = Partie.Joueur1.Nom;
                                         RunTxtBlockAuTourDe.Foreground = couleurJ1;
+
+                                        StartTimerIfNeeded();
 
                                         // Dans Grille.cs
                                         Partie.Grille.ChangerValeurCase(ligne, colonne, EtatCase.Joueur2);
@@ -249,6 +395,7 @@ namespace Puissance4.Interface
                                         alignement = true;
                                         PartieFini(joueur);
                                     }
+                                    StartTimerIfNeeded();
                                 }
                                 break;
                             }
@@ -273,6 +420,7 @@ namespace Puissance4.Interface
                         (colonne == 11 ? "S" :
                         ""))))))))))));
                 }
+                StartTimerIfNeeded();
             }
         }
 

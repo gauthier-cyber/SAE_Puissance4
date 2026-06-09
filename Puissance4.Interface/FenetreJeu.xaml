@@ -141,6 +141,7 @@
                 
                 <!-- Grille de jeu réalisée par le C# -->
             </Grid>
+            <TextBlock x:Name="TxtBlockTempsRestant" FontFamily="{StaticResource PlaypenSans}" FontSize="18" HorizontalAlignment="Center" Margin="0,10,0,0" Foreground="White" Visibility="Collapsed">Temps restant : 0s</TextBlock>
         </StackPanel>
         
         <ListBox x:Name="ListBoxHistorique" Grid.Column="2" Margin="0,10,10,0" BorderBrush="#FFCBC7B7" 
