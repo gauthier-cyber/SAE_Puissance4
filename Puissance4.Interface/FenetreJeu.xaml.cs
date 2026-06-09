@@ -104,6 +104,76 @@ namespace Puissance4.Interface
 
         public void Main(bool contrasteMarque, int tailleTexte)
         {
+            ContrasteMarque = contrasteMarque;
+            TailleTexte = tailleTexte;
+
+            // Ajuste la taille de police en fonction du réglage : on utilise un multiplicateur selon la valeur TailleTexte
+            double baseFontSize = SystemFonts.MessageFontSize;
+            double multiplier = (TailleTexte >= 6) ? 1.6 : (TailleTexte <= -6) ? 0.8 : 1.0;
+            double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
+            this.FontSize = newFontSize;
+
+            // Ajuster la taille de la fenêtre pour éviter que le texte n'empiète sur les encadrés
+            if (TailleTexte >= 6)
+            {
+                this.Width = 1000;
+                this.Height = 720;
+            }
+            else if (TailleTexte <= -6)
+            {
+                this.Width = 760;
+                this.Height = 520;
+            }
+            else
+            {
+                this.Width = 800;
+                this.Height = 550;
+            }
+
+            // Mettre à jour la taille des contrôles qui ont une taille fixe dans le XAML
+            // Titres et indication du joueur au tour
+            try {
+                // Le TextBlock contenant RunTxtBlockAuTourDe a pour parent un TextBlock
+                if (RunTxtBlockAuTourDe != null)
+                {
+                    RunTxtBlockAuTourDe.FontSize = this.FontSize;
+                    var parentTb = RunTxtBlockAuTourDe.Parent as TextBlock;
+                    if (parentTb != null) parentTb.FontSize = this.FontSize;
+                }
+
+                // Nom des joueurs et scores
+                if (TxtBlockJoueur1 != null) TxtBlockJoueur1.FontSize = this.FontSize;
+                if (TxtBlockJoueur2 != null) TxtBlockJoueur2.FontSize = this.FontSize;
+                if (TxtBlockScoreJoueur1 != null) TxtBlockScoreJoueur1.FontSize = this.FontSize;
+                if (TxtBlockScoreJoueur2 != null) TxtBlockScoreJoueur2.FontSize = this.FontSize;
+
+                // Boutons
+                if (BtnFinirChallenge != null) BtnFinirChallenge.FontSize = Math.Max(10, this.FontSize * 0.9);
+                if (BtnRelancerPartie != null) BtnRelancerPartie.FontSize = Math.Max(10, this.FontSize * 0.9);
+                if (BtnQuitter != null) BtnQuitter.FontSize = Math.Max(10, this.FontSize * 0.9);
+
+                // Temps restant et historique
+                if (TxtBlockTempsRestant != null) TxtBlockTempsRestant.FontSize = Math.Max(10, this.FontSize);
+                if (ListBoxHistorique != null) ListBoxHistorique.FontSize = Math.Max(10, this.FontSize);
+
+                // Ajuster la hauteur du BorderScore et la hauteur de la ListBox pour laisser de la place
+                if (BorderScore != null) BorderScore.Height = Math.Max(80, this.FontSize * 6);
+                if (ListBoxHistorique != null) ListBoxHistorique.Height = Math.Max(120, this.FontSize * 12);
+
+                // Ajuster les TextBlocks d'entête de colonnes (ligne 0) dans la grille
+                foreach (UIElement enfant in GridTableJeu.Children)
+                {
+                    if (enfant is TextBlock tb)
+                    {
+                        int row = Grid.GetRow(tb);
+                        if (row == 0)
+                        {
+                            tb.FontSize = Math.Max(10, this.FontSize * 0.8);
+                        }
+                    }
+                }
+            } catch { }
+
             DessinerGrille();
 
             couleurJ1 = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
@@ -124,7 +194,6 @@ namespace Puissance4.Interface
             DebutPartie = DateTime.Now;
 
             this.KeyDown += Window_KeyDown;
-
             StartTimerIfNeeded();
 
             if (Challenge != null)
@@ -186,6 +255,13 @@ namespace Puissance4.Interface
 
         private void TimerTempsReflexion_Tick(object? sender, EventArgs e)
         {
+            // Si la partie est déjà terminée, arrêter le timer et ne rien faire
+            if (Partie != null && Partie.Gagnant != null)
+            {
+                StopTimer();
+                return;
+            }
+
             tempsRestant -= 1;
             if (tempsRestant < 0) tempsRestant = 0;
             TxtBlockTempsRestant.Text = $"Temps restant : {tempsRestant}s";
@@ -193,6 +269,7 @@ namespace Puissance4.Interface
             if (tempsRestant == 0)
             {
                 StopTimer();
+                if (Partie == null || Partie.Gagnant != null) return;
                 AutoPlayOnTimeout();
             }
         }
@@ -252,20 +329,22 @@ namespace Puissance4.Interface
                                     nbCoups += 1;
 
                                     if (Partie.Grille.VérifierAlignements(Partie.Configuration.NbJetonAAligner) != EtatCase.Vide)
-                                    {
-                                        Joueur joueur;
-                                        if (Partie.JoueurCourant == Partie.Joueur1)
-                                            joueur = Partie.Joueur2;
-                                        else
-                                            joueur = Partie.Joueur1;
+                                                        {
+                                                            Joueur joueur;
+                                                            if (Partie.JoueurCourant == Partie.Joueur1)
+                                                                joueur = Partie.Joueur2;
+                                                            else
+                                                                joueur = Partie.Joueur1;
 
-                                        DateTime Fin = DateTime.Now;
-                                        TimeSpan intervalle = Fin - DebutPartie;
-                                        DureePartie = intervalle.TotalSeconds;
+                                                            DateTime Fin = DateTime.Now;
+                                                            TimeSpan intervalle = Fin - DebutPartie;
+                                                            DureePartie = intervalle.TotalSeconds;
 
-                                        alignement = true;
-                                        PartieFini(joueur);
-                                    }
+                                                            alignement = true;
+                                                            // arrêter le timer immédiatement avant d'appeler la fin de partie
+                                                            StopTimer();
+                                                            PartieFini(joueur);
+                                                        }
 
                                     StartTimerIfNeeded();
                                 }
@@ -589,15 +668,15 @@ namespace Puissance4.Interface
                 string lettre = ColonneToLettre(colonne);
                 // créer visuel : [NomJoueur] en [Lettre], avec nom coloré
                 StackPanel panel = new StackPanel { Orientation = Orientation.Horizontal };
-                TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontSize = 16 };
+                TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontSize = this.FontSize };
                 // déterminer couleur du joueur
                 if (nomJoueur == Partie.Joueur1.Nom)
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
                 else
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
 
-                TextBlock txtEn = new TextBlock { Text = "en ", FontSize = 16 };
-                TextBlock txtCol = new TextBlock { Text = lettre, FontSize = 16 };
+                TextBlock txtEn = new TextBlock { Text = "en ", FontSize = this.FontSize };
+                TextBlock txtCol = new TextBlock { Text = lettre, FontSize = this.FontSize };
 
                 if (ContrasteMarque)
                 {
@@ -614,7 +693,9 @@ namespace Puissance4.Interface
                 panel.Children.Add(txtEn);
                 panel.Children.Add(txtCol);
 
-                ListBoxHistorique.Items.Insert(0, panel);
+                // Insérer un ListBoxItem pour assurer le rendu du StackPanel dans le ListBox personnalisé
+                ListBoxItem item = new ListBoxItem { Content = panel, Padding = new Thickness(4), Background = Brushes.Transparent, BorderThickness = new Thickness(0) };
+                ListBoxHistorique.Items.Insert(0, item);
             }
             catch { }
         }
@@ -631,20 +712,21 @@ namespace Puissance4.Interface
             try
             {
                 StackPanel panel = new StackPanel { Orientation = Orientation.Horizontal };
-                TextBlock txtNom = new TextBlock { Text = gagnant.Nom + " ", FontSize = 16 };
+                TextBlock txtNom = new TextBlock { Text = gagnant.Nom + " ", FontSize = this.FontSize };
                 if (gagnant == Partie.Joueur1)
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
                 else
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
 
-                TextBlock txtMsg = new TextBlock { Text = "a gagné", FontSize = 16 };
+                TextBlock txtMsg = new TextBlock { Text = "a gagné", FontSize = this.FontSize };
                 if (ContrasteMarque)
                     txtMsg.Foreground = Brushes.Black;
                 else
                     txtMsg.Foreground = Brushes.White;
                 panel.Children.Add(txtNom);
                 panel.Children.Add(txtMsg);
-                ListBoxHistorique.Items.Insert(0, panel);
+                ListBoxItem item = new ListBoxItem { Content = panel, Padding = new Thickness(4), Background = Brushes.Transparent, BorderThickness = new Thickness(0) };
+                ListBoxHistorique.Items.Insert(0, item);
             }
             catch { }
         }
@@ -654,20 +736,21 @@ namespace Puissance4.Interface
             try
             {
                 StackPanel panel = new StackPanel { Orientation = Orientation.Horizontal };
-                TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontSize = 16 };
+                TextBlock txtNom = new TextBlock { Text = nomJoueur + " ", FontSize = this.FontSize };
                 if (nomJoueur == Partie.Joueur1.Nom)
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
                 else
                     txtNom.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
 
-                TextBlock txtMsg = new TextBlock {Text = "a rejoint", FontSize = 16 };
+                TextBlock txtMsg = new TextBlock {Text = "a rejoint", FontSize = this.FontSize };
                 if (ContrasteMarque)
                     txtMsg.Foreground = Brushes.Black;
                 else
                     txtMsg.Foreground = Brushes.White;
                 panel.Children.Add(txtNom);
                 panel.Children.Add(txtMsg);
-                ListBoxHistorique.Items.Insert(0, panel);
+                ListBoxItem item = new ListBoxItem { Content = panel, Padding = new Thickness(4), Background = Brushes.Transparent, BorderThickness = new Thickness(0) };
+                ListBoxHistorique.Items.Insert(0, item);
             }
             catch { }
         }
@@ -975,6 +1058,8 @@ namespace Puissance4.Interface
             }
             else
             {
+                // fin de la partie en mode challenge : arrêter le timer pour éviter des actions supplémentaires
+                StopTimer();
                 Partie.FinirPartie(premierCoup!, coupDecisif!, DureePartie, nbCoups, Gagnant);
                 AjouterHistoriqueGagne(Gagnant);
                 if (Gagnant == Partie.Joueur1)

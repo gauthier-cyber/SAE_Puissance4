@@ -59,11 +59,41 @@ namespace Puissance4.Interface
 
         public void Main(bool contrasteMarque, int tailleTexte)
         {
-            TxtBlockNomJoueur.Text = Partie.Gagnant!.Nom;
-            if (Partie.Gagnant == Partie.Joueur1)
-                TxtBlockNomJoueur.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
+            // Si la fenêtre est ouverte depuis un Challenge, déterminer le vainqueur global (ou match nul)
+            if (Challenge != null)
+            {
+                if (Challenge.ScoreJoueur1 > Challenge.ScoreJoueur2)
+                {
+                    Partie.Gagnant = Partie.Joueur1;
+                }
+                else if (Challenge.ScoreJoueur2 > Challenge.ScoreJoueur1)
+                {
+                    Partie.Gagnant = Partie.Joueur2;
+                }
+                else
+                {
+                    Partie.Gagnant = new Joueur("Match nul");
+                }
+            }
+
+            // Afficher le nom du vainqueur (ou "Match nul") et choisir la couleur appropriée
+            if (Partie.Gagnant != null && Partie.Gagnant.Nom == "Match nul")
+            {
+                // afficher uniquement "Match nul"
+                StackVictoire.Visibility = Visibility.Collapsed;
+                TxtMatchNul.Visibility = Visibility.Visible;
+            }
             else
-                TxtBlockNomJoueur.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
+            {
+                StackVictoire.Visibility = Visibility.Visible;
+                TxtMatchNul.Visibility = Visibility.Collapsed;
+
+                TxtBlockNomJoueur.Text = Partie.Gagnant!.Nom;
+                if (Partie.Gagnant == Partie.Joueur1)
+                    TxtBlockNomJoueur.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
+                else
+                    TxtBlockNomJoueur.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur2)!;
+            }
 
             TxtBlockJoueur1.Text = Partie.Joueur1.Nom;
             TxtBlockJoueur1.Foreground = (Brush)new BrushConverter().ConvertFromString(Partie.Configuration.CouleurJoueur1)!;
@@ -77,6 +107,11 @@ namespace Puissance4.Interface
 
             ContrasteMarque = contrasteMarque;
             TailleTexte = tailleTexte;
+
+            double baseFontSize = SystemFonts.MessageFontSize;
+            double multiplier = (TailleTexte >= 6) ? 1.6 : (TailleTexte <= -6) ? 0.8 : 1.0;
+            double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
+            this.FontSize = newFontSize;
 
             if (contrasteMarque)
             {

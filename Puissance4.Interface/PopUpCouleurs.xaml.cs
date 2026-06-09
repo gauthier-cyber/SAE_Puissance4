@@ -25,6 +25,10 @@ namespace Puissance4.Interface
         public PopUpCouleurs(bool contrasteMarque, int tailleTexte)
         {
             InitializeComponent();
+            double baseFontSize = SystemFonts.MessageFontSize;
+            double multiplier = (tailleTexte >= 6) ? 1.6 : (tailleTexte <= -6) ? 0.8 : 1.0;
+            double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
+            this.FontSize = newFontSize;
             if (contrasteMarque)
             {
                 this.Background = Brushes.White;

@@ -49,6 +49,13 @@ namespace Puissance4.Interface
             ContrasteMarque = contrasteMarque;
             TailleTexte = tailleTexte;
 
+            // Ajuste la taille de police de la fenêtre et des éléments enfants en fonction du paramètre tailleTexte.
+            // On utilise un multiplicateur basé sur la valeur choisie (petit/moyen/grand).
+            double baseFontSize = SystemFonts.MessageFontSize;
+            double multiplier = (TailleTexte >= 6) ? 1.6 : (TailleTexte <= -6) ? 0.8 : 1.0;
+            double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
+            this.FontSize = newFontSize;
+
             if (contrasteMarque)
             {
                 this.Background = Brushes.White;

@@ -40,6 +40,10 @@ namespace Puissance4.Interface
             ContrasteMarque = contrasteMarque;
             TailleTexte = tailleTexte;
 
+            double baseFontSize = SystemFonts.MessageFontSize;
+            double newFontSize = Math.Max(8, baseFontSize + TailleTexte);
+            this.FontSize = newFontSize;
+
             if (contrasteMarque)
             {
                 this.Background = Brushes.White;
