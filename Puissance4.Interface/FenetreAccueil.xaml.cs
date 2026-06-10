@@ -34,6 +34,15 @@ namespace Puissance4.Interface
             Main(contrasteMarque);
         }
 
+        // constructeur avec taille de texte pour compatibilité
+        public FenetreAccueil(bool contrasteMarque, int tailleTexte)
+        {
+            InitializeComponent();
+            DésactiverBtnIA();
+            Main(contrasteMarque);
+            // taille de texte non utilisée ici mais conservée pour compatibilité
+        }
+
         public void Main(bool contrasteMarque)
         {
             ContrasteMarque = contrasteMarque;
@@ -43,49 +52,41 @@ namespace Puissance4.Interface
                 this.Background = Brushes.White;
                 this.FontFamily = new FontFamily("Verdana");
                 this.Foreground = Brushes.Black;
-                BtnNouvellePartie.Foreground = Brushes.Black;
-                BtnReprendrePartie.Foreground = Brushes.Black;
-                BorderNouvellePartie.Background = Brushes.White;
+                // mise à jour visuelle quand contraste fort
             }
         }
 
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
-            // si le bouton est déjà cliqué : on enlève la bordure blanche, on remontre BtnReprendrePartie et on cache BorderNouvellePartie
-            // sinon : on met une bordure blanche, on montre BorderNouvellePartie et on cache BtnReprendrePartie
-            string tag = (string)BtnNouvellePartie.Tag;
-            if (tag == "EstCliqué")
-            {
-                BtnNouvellePartie.BorderThickness = new Thickness(0);
-                BtnReprendrePartie.Visibility = Visibility.Visible;
-                BorderNouvellePartie.Visibility = Visibility.Hidden;
-                BtnNouvellePartie.Tag = "";
-            }
-            else
+            if (BtnNouvellePartie.Tag == null || (string)BtnNouvellePartie.Tag != "EstCliqué")
             {
                 BtnNouvellePartie.BorderThickness = new Thickness(5);
                 BorderNouvellePartie.Visibility = Visibility.Visible;
                 BtnReprendrePartie.Visibility = Visibility.Hidden;
                 BtnNouvellePartie.Tag = "EstCliqué";
             }
+            else
+            {
+                BtnNouvellePartie.BorderThickness = new Thickness(0);
+                BtnReprendrePartie.Visibility = Visibility.Visible;
+                BorderNouvellePartie.Visibility = Visibility.Hidden;
+                BtnNouvellePartie.Tag = "";
+            }
         }
 
         private void BtnReprendrePartie_Click(object sender, RoutedEventArgs e)
         {
-            // on ouvre la pop-up des sauvegardes
             PopUpSauvegarde popUp = new PopUpSauvegarde(ContrasteMarque);
             popUp.ShowDialog();
         }
 
         private void BtnReprendrePartie_GotFocus(object sender, RoutedEventArgs e)
         {
-            // on met une bordure blanche quand le bouton est sélectionné
             BtnReprendrePartie.BorderThickness = new Thickness(5);
         }
 
         private void BtnReprendrePartie_LostFocus(object sender, RoutedEventArgs e)
         {
-            // on enlève la bordure blanche quand on quitte le bouton
             BtnReprendrePartie.BorderThickness = new Thickness(0);
         }
 

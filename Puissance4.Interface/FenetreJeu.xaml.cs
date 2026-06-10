@@ -374,7 +374,8 @@ namespace Puissance4.Interface
 
         private void BtnFinirChallenge_Click(object sender, RoutedEventArgs e)
         {
-            FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie, Challenge!, ContrasteMarque, TailleTexte);
+            // ouvrir la fenêtre de victoire en mode challenge
+            FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie, Challenge!);
             fenetreVictoire.Show();
             this.Close();
         }
@@ -1053,7 +1054,7 @@ namespace Puissance4.Interface
             {
                 Partie.FinirPartie(premierCoup!, coupDecisif!, DureePartie, nbCoups, Gagnant);
                 AjouterHistoriqueGagne(Gagnant);
-                FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie, ContrasteMarque, TailleTexte);
+                FenetreVictoire fenetreVictoire = new FenetreVictoire(Partie);
                 fenetreVictoire.Show();
                 this.Close();
             }

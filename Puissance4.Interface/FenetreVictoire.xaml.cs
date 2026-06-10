@@ -23,7 +23,7 @@ namespace Puissance4.Interface
         private bool ContrasteMarque;
         private int TailleTexte;
 
-        public FenetreVictoire(Partie partie, Challenge challenge)
+        public FenetreVictoire(Partie partie, Challenge? challenge)
         {
             InitializeComponent();
             Partie = partie;
