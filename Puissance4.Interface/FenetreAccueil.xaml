@@ -19,9 +19,9 @@
         <TextBlock Text="Bienvenue au Puissance 4 !" FontSize="24" 
                    Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-        <Button x:Name="BtnNewGame" Grid.Row="1" Content="Nouvelle Partie Classique" Height="60" Width="350" Background="#CBC7B7"
+        <Button x:Name="BtnNouvellePartie" Grid.Row="1" Content="Nouvelle Partie Classique" Height="60" Width="350" Background="#CBC7B7"
                 Foreground="#FF0A111F" FontSize="20" BorderThickness="0" 
-                Click="BtnNewGame_Click">
+                Click="BtnNouvellePartie_Click">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border Background="{TemplateBinding Background}" 
@@ -31,9 +31,9 @@
                 </ControlTemplate>
             </Button.Template>
         </Button>
-        <Button x:Name="BtnContinueGame" Grid.Row="2" Content="Reprendre une partie" Height="60" Width="350" Background="#CBC7B7"
+        <Button x:Name="BtnReprendrePartie" Grid.Row="2" Content="Reprendre une partie" Height="60" Width="350" Background="#CBC7B7"
                 Foreground="#FF0A111F" FontSize="20" BorderThickness="0" 
-                Click="BtnContinueGame_Click" GotFocus="BtnContinueGame_GotFocus" LostFocus="BtnContinueGame_LostFocus">
+                Click="BtnReprendrePartie_Click" GotFocus="BtnReprendrePartie_GotFocus" LostFocus="BtnReprendrePartie_LostFocus">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border Background="{TemplateBinding Background}" 
@@ -44,7 +44,7 @@
             </Button.Template>
         </Button>
 
-        <Border x:Name="BorderNewGame" Grid.Row="2" Height="140" Width="400" Background="#1d1f23" CornerRadius="20" Visibility="Hidden">
+        <Border x:Name="BorderNouvellePartie" Grid.Row="2" Height="140" Width="400" Background="#1d1f23" CornerRadius="20" Visibility="Hidden">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -83,7 +83,7 @@
 
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Quel est le niveau de l'IA ?" FontSize="20" 
                    VerticalAlignment="Center" Margin="10,0,0,0"/>
-                
+
                 <Button x:Name="BtnIAIdiot" Grid.Row="2" Grid.Column="0" Content="Idiot" Height="40" Width="150" Background="#cbc7b7"
                         Foreground="#FF0A111F" FontSize="20" BorderThickness="0"
                         Click="BtnIA_Click">

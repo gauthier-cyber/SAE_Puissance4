@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Puissance4.Systeme
 {
-    // l'ia choisit juste une colonne et renvoie son numero
-    // elle ne s'occupe pas de l'affichage
-    // niveau idiot = colonne au hasard, niveau intelligent = minimax alpha-beta
-    // l'ia joue les jetons Joueur2, l'humain joue les jetons Joueur1
+    // ia choisit une colonne et renvoie son index
+    // pas d'affichage ici
+    // idiot = choix aléatoire, intelligent = minimax
+    // ia = joueur2, humain = joueur1
     public class IA
     {
         private NiveauVirtuel niveau;     // idiot ou intelligent
@@ -22,7 +22,7 @@ namespace Puissance4.Systeme
             this.profondeurMax = 7;
         }
 
-        // methode appelee par la fenetre de jeu, renvoie la colonne choisie
+        // appelée par la fenêtre de jeu, renvoie la colonne choisie
         public int ChoisirColonne(Grille grille)
         {
             if (niveau == NiveauVirtuel.Idiot)
@@ -35,7 +35,7 @@ namespace Puissance4.Systeme
             }
         }
 
-        // ia idiote : une colonne au hasard parmi celles encore jouables
+        // ia idiote: colonne choisie au hasard parmi les jouables
         private int ChoisirColonneIdiot(Grille grille)
         {
             List<int> colonnesJouables = ColonnesJouables(grille);
@@ -50,7 +50,7 @@ namespace Puissance4.Systeme
             return colonnesJouables[index];
         }
 
-        // ia intelligente : on teste chaque colonne et on garde celle qui a le meilleur score
+        // ia intelligente: teste chaque colonne et garde la meilleure
         private int ChoisirColonneIntelligent(Grille grille)
         {
             List<int> colonnesJouables = ColonnesJouables(grille);
@@ -94,8 +94,8 @@ namespace Puissance4.Systeme
             return meilleureColonne;
         }
 
-        // minimax avec elagage alpha-beta (vu en sae 2.2)
-        // estMax = true quand c'est a l'ia de jouer, false pour l'adversaire
+        // minimax avec élagage alpha-beta
+        // estMax true quand c'est l'ia, false pour l'adversaire
         private int AlphaBeta(Grille grille, int profondeur, int alpha, int beta, bool estMax)
         {
             EtatCase gagnant = grille.VérifierAlignements(nbJetonsPourGagner);
@@ -185,8 +185,8 @@ namespace Puissance4.Systeme
             }
         }
 
-        // donne un score a la position : score de l'ia moins score de l'adversaire
-        // un groupe de 2 vaut 1, un groupe de 3 vaut 2, un groupe de 4 vaut 4... (poids 2^(t-2))
+        // évalue la position: score ia - score adversaire
+        // poids des groupes: 2^(t-2)
         private int Evaluer(Grille grille)
         {
             int scoreIA = 0;
@@ -212,8 +212,8 @@ namespace Puissance4.Systeme
             return scoreIA - scoreAdversaire;
         }
 
-        // compte les groupes de "taille" jetons alignes pour un joueur
-        // on regarde les 4 directions, comme dans VérifierAlignements de Grille.cs
+        // compte les groupes de la taille demandée pour un joueur
+        // vérifie les 4 directions
         private int CompterAlignements(Grille grille, EtatCase joueur, int taille)
         {
             int compteur = 0;
@@ -305,7 +305,7 @@ namespace Puissance4.Systeme
             return compteur;
         }
 
-        // liste des colonnes pas encore pleines (la case du haut est vide)
+        // colonnes encore jouables (case du haut vide)
         private List<int> ColonnesJouables(Grille grille)
         {
             List<int> colonnes = new List<int>();
@@ -319,8 +319,8 @@ namespace Puissance4.Systeme
             return colonnes;
         }
 
-        // fait tomber un jeton dans une colonne (gravite)
-        // renvoie la ligne ou il s'est pose, ou -1 si la colonne est pleine
+        // fait tomber un jeton dans la colonne
+        // renvoie la ligne où il s'est posé, -1 si pleine
         private int JouerCoup(Grille grille, int colonne, EtatCase joueur)
         {
             for (int ligne = grille.Lignes - 1; ligne >= 0; ligne--)
@@ -334,7 +334,7 @@ namespace Puissance4.Systeme
             return -1; // colonne pleine
         }
 
-        // copie la grille pour tester des coups sans abimer la partie
+        // copie la grille pour tester des coups sans modifier la vraie partie
         private Grille CopierGrille(Grille grille)
         {
             Grille copie = new Grille(grille.Lignes, grille.Colonnes);

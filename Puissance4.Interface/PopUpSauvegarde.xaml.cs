@@ -22,13 +22,9 @@ namespace Puissance4.Interface
             InitializeComponent();
         }
 
-        public PopUpSauvegarde(bool contrasteMarque, int tailleTexte)
+        public PopUpSauvegarde(bool contrasteMarque)
         {
             InitializeComponent();
-            double baseFontSize = SystemFonts.MessageFontSize;
-            double multiplier = (tailleTexte >= 6) ? 1.6 : (tailleTexte <= -6) ? 0.8 : 1.0;
-            double newFontSize = Math.Max(8, Math.Round(baseFontSize * multiplier));
-            this.FontSize = newFontSize;
             if (contrasteMarque)
             {
                 this.Background = Brushes.White;
@@ -39,7 +35,7 @@ namespace Puissance4.Interface
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
-            // Faire apparaître un message d'erreur "Il n'y a pas de sauvegarde disponible"
+            // on prévient qu'il n'y a aucune sauvegarde à charger
             MessageBox.Show("Il n'y a pas de sauvegarde disponible");
         }
     }
